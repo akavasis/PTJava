@@ -10,24 +10,18 @@ interface Sampler {
 
 class DefaultSampler implements Sampler {
 
-    public static enum LightMode {
-        LightModeRandom, LightModeAll
-    }
-
-    public static enum SpecularMode {
-        SpecularModeNaive, SpecularModeFirst, SpecularModeAll
-    }
-
-    public static enum BounceType {
-        BounceTypeAny, BounceTypeDiffuse, BounceTypeSpecular
-    }
-
     int FirstHitSamples;
     int MaxBounces;
     boolean DirectLighting;
     boolean SoftShadows;
     public LightMode LMode;
     public SpecularMode SMode;
+    double p;
+    boolean reflected;
+    Ray newRay;
+    Vector point;
+    Vector center;
+    double radius;
 
     DefaultSampler() {
 
@@ -42,7 +36,7 @@ class DefaultSampler implements Sampler {
         this.SMode = SM;
     }
 
-    DefaultSampler NewSampler(int firstHitSamples, int maxBounces) {
+    static DefaultSampler NewSampler(int firstHitSamples, int maxBounces) {
         return new DefaultSampler(firstHitSamples, maxBounces, true, true, LightMode.LightModeRandom, SpecularMode.SpecularModeNaive);
     }
 
@@ -57,109 +51,74 @@ class DefaultSampler implements Sampler {
     }
 
     Colour sample(Scene scene, Ray ray, boolean emission, int samples, int depth, Random rand) {
-
-        if (depth > this.MaxBounces) {
+        if (depth > MaxBounces) {
             return Colour.Black;
         }
 
         Hit hit = scene.Intersect(ray);
 
         if (!hit.Ok()) {
-            return this.sampleEnvironment(scene, ray);
-
+            return sampleEnvironment(scene, ray);
         }
 
         HitInfo info = hit.Info(ray);
         Material material = info.material;
-        Colour result = new Colour(0, 0, 0);
+        Colour result = Colour.Black;
 
         if (material.Emittance > 0) {
-            if (this.DirectLighting && !emission) {
-                return new Colour(0, 0, 0);
+            if (DirectLighting && !emission) {
+                return Colour.Black;
             }
             result = result.Add(material.Color.MulScalar(material.Emittance * (double) samples));
         }
-
-        int n = (int) (Math.sqrt((double) (samples)));
-
+        int n = (int) Math.sqrt(samples);
         BounceType ma, mb;
-
-        if ((SMode == SpecularMode.SpecularModeAll) || (depth == 0 && SMode == SpecularMode.SpecularModeFirst)) {
+        if (SMode.equals(SpecularMode.SpecularModeAll) || (depth == 0 && SMode.equals(SpecularMode.SpecularModeFirst))) 
+        {
             ma = BounceType.BounceTypeDiffuse;
             mb = BounceType.BounceTypeSpecular;
         } else {
             ma = BounceType.BounceTypeAny;
             mb = BounceType.BounceTypeAny;
         }
-
-        for (int u = 0; u < n; u++) {
-            for (int v = 0; v < n; v++) {
-
-                if ((ma == BounceType.BounceTypeAny) && (mb == BounceType.BounceTypeAny)) {
+        for (int u = 0; u < n; u++)
+        {
+            for (int v = 0; v < n; v++)
+            {
+                //for (BounceType mode=ma; mode.ordinal() <= mb.ordinal();) { 
+                //for (BounceType mode = ma : BounceType.values())
+                //{
+                for (int i = ma.ordinal(); i <= mb.ordinal(); i++) 
+                {
                     double fu = ((double) u + rand.nextDouble()) / (double) n;
                     double fv = ((double) v + rand.nextDouble()) / (double) n;
 
-                    Ray newRay = ray.Bounce(info, fu, fv, BounceType.BounceTypeAny, rand);
-                    newRay.bouncep = 1;
+                    //(var newRay, var reflected, var p) =
+                    Ray newRay = ray.Bounce(info, fu, fv, BounceType.values()[i], rand);
+
+                    if (BounceType.values()[i] == BounceType.BounceTypeAny) {
+                        newRay.bouncep = 1;
+                    }
 
                     if (newRay.bouncep > 0 && newRay.reflected) {
                         // specular
-                        Colour indirect = this.sample(scene, newRay, newRay.reflected, 1, depth + 1, rand);
+                        Colour indirect = sample(scene, newRay, newRay.reflected, 1, depth + 1, rand);
                         Colour tinted = indirect.Mix(material.Color.Mul(indirect), material.Tint);
-                        result = result.Add(tinted.MulScalar(newRay.bouncep));
+                        result = result.Add(tinted.MulScalar(p));
                     }
 
                     if (newRay.bouncep > 0 && !newRay.reflected) {
                         // diffuse
-                        Colour indirect = this.sample(scene, newRay, newRay.reflected, 1, depth + 1, rand);
-                        Colour direct = new Colour(0, 0, 0);
+                        Colour indirect = sample(scene, newRay, newRay.reflected, 1, depth + 1, rand);
+                        Colour direct = Colour.Black;
 
-                        if (this.DirectLighting) {
-                            direct = this.sampleLights(scene, info.Ray, rand);
+                        if (DirectLighting) {
+                            direct = sampleLights(scene, info.Ray, rand);
                         }
-
-                        result = result.Add(material.Color.Mul(direct.Add(indirect)).MulScalar(newRay.bouncep));
+                        result = result.Add(material.Color.Mul(direct.Add(indirect)).MulScalar(p));
                     }
 
                 }
-
-                if ((ma == BounceType.BounceTypeDiffuse) && (mb == BounceType.BounceTypeSpecular)) {
-
-                    double fu = ((double) u + rand.nextDouble()) / (double) n;
-                    double fv = ((double) v + rand.nextDouble()) / (double) n;
-
-                    Ray newRay = null;
-
-                    for (int i = 1; i <= 2; i++) {
-
-                        if (i == 1) {
-                            newRay = ray.Bounce(info, fu, fv, BounceType.BounceTypeDiffuse, rand);
-                        } else if (i == 2) {
-                            newRay = ray.Bounce(info, fu, fv, BounceType.BounceTypeSpecular, rand);
-                        }
-
-                        if (newRay.bouncep > 0 && newRay.reflected) {
-                            // specular
-                            Colour indirect = this.sample(scene, newRay, newRay.reflected, 1, depth + 1, rand);
-                            Colour tinted = indirect.Mix(material.Color.Mul(indirect), material.Tint);
-                            result = result.Add(tinted.MulScalar(newRay.bouncep));
-                        }
-
-                        if (newRay.bouncep > 0 && !newRay.reflected) {
-                            // diffuse
-                            Colour indirect = this.sample(scene, newRay, newRay.reflected, 1, depth + 1, rand);
-                            Colour direct = new Colour(0, 0, 0);
-
-                            if (this.DirectLighting) {
-                                direct = this.sampleLights(scene, info.Ray, rand);
-                            }
-
-                            result = result.Add(material.Color.Mul(direct.Add(indirect)).MulScalar(newRay.bouncep));
-                        }
-                    }
-
-                }
-
             }
         }
 
@@ -180,38 +139,54 @@ class DefaultSampler implements Sampler {
 
     Colour sampleLights(Scene scene, Ray n, Random rand) {
         int nLights = scene.Lights.length;
-        if (nLights == 0) {
-            return Colour.Black;
-        }
-        if (LMode == LightMode.LightModeAll) {
-            Colour result = new Colour();
-            for (IShape light : scene.Lights) {
-                result = result.Add(this.sampleLight(scene, n, rand, light));
+            if(nLights == 0)
+            {
+                return Colour.Black;
             }
-            return result;
-        } else {
+            
+            if(LMode.equals(LightMode.LightModeAll))
+            {
+                Colour result = new Colour();
+                for (IShape light : scene.Lights)
+                {
+                    if(light != null)
+                    {
+                        result = result.Add(sampleLight(scene, n, rand, light));
+                    }
+                    
+                }
+                return result;
+        
+            } else {
+            // pick a random light
             IShape light = scene.Lights[rand.nextInt(nLights)];
-            return this.sampleLight(scene, n, rand, light).MulScalar((double) nLights);
-        }
+                return sampleLight(scene, n, rand, light).MulScalar(nLights);
+            }
     }
 
     Colour sampleLight(Scene scene, Ray n, Random rand, IShape light) {
-        Vector center;
-        double radius;
-        if (light instanceof Sphere) {
-            radius = ((Sphere) light).Radius;
-            center = ((Sphere) light).Center;
-        } else {
-            Box box = light.BoundingBox();
-            radius = box.OuterRadius();
-            center = box.Center();
+        
+        
+        if(light != null)
+        {
+            if (light instanceof Sphere) {
+                radius = ((Sphere) light).Radius;
+                center = ((Sphere) light).Center;
+            } else {
+                Box box = light.BoundingBox();
+                radius = box.OuterRadius();
+                center = box.Center();
+            }
+            point = center;
         }
-        Vector point = center;
-        if (this.SoftShadows) {
+        
+        
+        
+        if (SoftShadows) {
             for (;;) {
                 double x = rand.nextDouble() * 2 - 1;
                 double y = rand.nextDouble() * 2 - 1;
-                if (x * x + y * y <= 1) {
+                if ((x * x) + (y * y) <= 1) {
                     Vector l = center.Sub(n.Origin).Normalize();
                     Vector u = l.Cross(Vector.RandomUnitVector(rand)).Normalize();
                     Vector v = l.Cross(u);

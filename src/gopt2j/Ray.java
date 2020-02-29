@@ -1,30 +1,31 @@
 package gopt2j;
 
-import gopt2j.DefaultSampler.BounceType;
 import java.util.Random;
 import gopt2j.Hit.HitInfo;
+import static gopt2j.Swap.swapDouble;
 
 public class Ray {
 
     public Vector Origin, Direction;
-    public Boolean reflected;
+    public boolean reflected;
     public double bouncep;
+    boolean reflect;
+    boolean condition;
 
-    public Ray(Vector Origin, Vector Direction) {
-        this.Origin = Origin;
-        this.Direction = Direction;
+    public Ray(Vector Origin_, Vector Direction_) {
+        Origin = Origin_;
+        Direction = Direction_;
     }
 
-    public Ray(Vector Origin, Vector Direction, Boolean reflected, double p) {
-        this.Origin = Origin;
-        this.Direction = Direction;
-        this.reflected = reflected;
-        this.bouncep = p;
+    public Ray(Vector Origin_, Vector Direction_, Boolean reflected_, double p_) {
+        Origin = Origin_;
+        Direction = Direction_;
+        reflected = reflected_;
+        bouncep = p_;
     }
 
     public Vector Position(double t) {
         return this.Origin.Add(this.Direction.MulScalar(t));
-
     }
 
     public Ray Reflect(Ray i) {
@@ -63,12 +64,9 @@ public class Ray {
         Material material = info.material;
         double n1 = 1.0;
         double n2 = material.Index;
-        double temp;
 
         if (info.inside) {
-            temp = n1;
-            n1 = n2;
-            n2 = temp;
+            n1 = swapDouble(n2, n2 = n1);
         }
 
         double p;
@@ -79,38 +77,40 @@ public class Ray {
             p = n.Reflectance(this, n1, n2);
         }
 
-        Boolean reflect = null;
-
-        switch (bounceType) {
-            case BounceTypeAny:
-                reflect = rand.nextDouble() < p;
-                break;
-            case BounceTypeDiffuse:
-                reflect = false;
-                break;
-            case BounceTypeSpecular:
-                reflect = true;
-                break;
+        if (null != bounceType) {
+            switch (bounceType) {
+                case BounceTypeAny: {
+                    reflect = rand.nextDouble() < p;
+                    break;
+                }
+                case BounceTypeDiffuse: {
+                    reflect = false;
+                    break;
+                }
+                case BounceTypeSpecular: {
+                    reflect = true;
+                    break;
+                }
+                default:
+                    break;
+            }
         }
 
         if (reflect) {
-            Ray reflectedRay = n.Reflect(this);
-            Ray cbounce = reflectedRay.ConeBounce(material.Gloss, u, v, rand);
-            cbounce.reflected = true;
-            cbounce.bouncep = p;
-            return cbounce;
+            Ray reflected = n.Reflect(this);
+            reflected.condition = true;
+            reflected.bouncep = p;
+            return reflected;
         } else if (material.Transparent) {
-            Ray refractedRay = n.Refract(this, n1, n2);
-            refractedRay.Origin = refractedRay.Origin.Add(refractedRay.Direction.MulScalar(1e-4));
-            Ray rcbounce = refractedRay.ConeBounce(material.Gloss, u, v, rand);
-            rcbounce.reflected = true;
-            rcbounce.bouncep = 1 - p;
-            return rcbounce;
+            Ray refracted = n.Refract(this, n1, n2);
+            refracted.Origin = refracted.Origin.Add(refracted.Direction.MulScalar(1e-4));
+            refracted.condition = true;
+            return refracted;
         } else {
-            Ray wBounce = this.WeightedBounce(u, v, rand);
-            wBounce.reflected = false;
-            wBounce.bouncep = 1 - p;
-            return wBounce;
+            Ray bounced = n.WeightedBounce(u, v, rand);
+            bounced.condition = false;
+            bounced.bouncep = 1 - p;
+            return bounced;
         }
     }
 }
