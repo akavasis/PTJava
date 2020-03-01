@@ -62,6 +62,7 @@ public class Ray {
     public Ray Bounce(HitInfo info, double u, double v, BounceType bounceType, Random rand) {
         Ray n = info.Ray;
         Material material = info.material;
+        
         double n1 = 1.0;
         double n2 = material.Index;
 
@@ -70,44 +71,35 @@ public class Ray {
         }
 
         double p;
-
         if (material.Reflectivity >= 0) {
             p = material.Reflectivity;
         } else {
             p = n.Reflectance(this, n1, n2);
         }
 
-        if (null != bounceType) {
-            switch (bounceType) {
-                case BounceTypeAny: {
-                    reflect = rand.nextDouble() < p;
-                    break;
-                }
-                case BounceTypeDiffuse: {
-                    reflect = false;
-                    break;
-                }
-                case BounceTypeSpecular: {
-                    reflect = true;
-                    break;
-                }
-                default:
-                    break;
-            }
+        if (bounceType == BounceType.BounceTypeAny) {
+            reflect = rand.nextDouble() < p;
+        } else if (bounceType == BounceType.BounceTypeDiffuse) {
+            reflect = false;
+        } else if (bounceType == BounceType.BounceTypeSpecular) {
+            reflect = true;
         }
 
         if (reflect) {
             Ray reflected = n.Reflect(this);
+
             reflected.condition = true;
             reflected.bouncep = p;
             return reflected;
         } else if (material.Transparent) {
             Ray refracted = n.Refract(this, n1, n2);
+
             refracted.Origin = refracted.Origin.Add(refracted.Direction.MulScalar(1e-4));
             refracted.condition = true;
             return refracted;
         } else {
             Ray bounced = n.WeightedBounce(u, v, rand);
+
             bounced.condition = false;
             bounced.bouncep = 1 - p;
             return bounced;

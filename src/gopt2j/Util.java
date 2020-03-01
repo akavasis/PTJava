@@ -22,75 +22,60 @@ public class Util {
         return radians * 180 / Math.PI;
     }
 
-    /*
     public static Vector Cone(Vector direction, double theta, double u, double v, Random rand) {
-        double m1, m2, a;
-        Vector q;
-        Vector s;
-        Vector t, d;
-
-        if (theta < EPS) {
+        if (theta < Util.EPS) {
             return direction;
-        } else {
-            theta = theta * (1 - (2 * Math.cos(u) / Math.PI));
-            m1 = Math.sin(theta);
-            m2 = Math.cos(theta);
-            a = v * 2 * Math.PI;
-            q = Vector.RandomUnitVector(rand);
-            s = direction.Cross(q);
-            t = direction.Cross(s);
-            d = new Vector();
-            d = d.Add(s.MulScalar(m1 * Math.cos(a)));
-            d = d.Add(t.MulScalar(m1 * Math.sin(a)));
-            d = d.Add(direction.MulScalar(m2));
-            d = d.Normalize();
-            return d;
         }
+        theta = theta * (1 - (2 * Math.cos(u) / Math.PI));
+        var m1 = Math.sin(theta);
+        var m2 = Math.cos(theta);
+        var a = v * 2 * Math.PI;
+        var q = Vector.RandomUnitVector(rand);
+        var s = direction.Cross(q);
+        var t = direction.Cross(s);
+        var d = new Vector();
+        d = d.Add(s.MulScalar(m1 * Math.cos(a)));
+        d = d.Add(t.MulScalar(m1 * Math.sin(a)));
+        d = d.Add(direction.MulScalar(m2));
+        d = d.Normalize();
+        return d;
+    }
 
-    }*/
-    
-    static Vector Cone(Vector direction, double theta, double u, double v, Random rand) {
-	if(theta < EPS) {
-            return direction;
-	}
-	
-        theta = theta * (1 - (2 * Math.acos(u) / Math.PI));
-        double m1 = Math.sin(theta);
-        double m2 = Math.cos(theta);
-        double a = v * 2 * Math.PI;
-        Vector q = Vector.RandomUnitVector(rand);
-        Vector s = direction.Cross(q);
-        Vector t = direction.Cross(s);
-        Vector d = new Vector();
-	d = d.Add(s.MulScalar(m1 * Math.cos(a)));
-	d = d.Add(t.MulScalar(m1 * Math.sin(a)));
-	d = d.Add(direction.MulScalar(m2));
-	d = d.Normalize();
-	return d;
-    }
-    
     // Using Apache Maths 
-    static double Median(double[] items) {
-        Median median = new Median();
-        double medianValue = median.evaluate(items);
-        return medianValue;
-    }
-    
-    static double Median(List<Double> a){
-        
-        int middle = a.size()/2;
- 
+    //static double Median(double[] items) {
+    //    Median median = new Median();
+    //    double medianValue = median.evaluate(items);
+    //    return medianValue;
+    //}
+
+    static double Median(List<Double> a) {
+
+        int middle = a.size() / 2;
+
         if (a.size() % 2 == 1) {
             return a.get(middle);
         } else {
-           return (a.get(middle-1) + a.get(middle)) / 2.0;
+            return (a.get(middle - 1) + a.get(middle)) / 2.0;
         }
-    
+
     }
-    
+
+    double Median(double[] items) {
+        var n = items.length;
+        if (n == 0) {
+
+            return 0;
+        } else if (n % 2 == 1) {
+            return items[items.length / 2];
+        } else {
+            var a = items[items.length / 2 - 1];
+            var b = items[items.length / 2];
+            return (a + b) / 2;
+        }
+    }
 
     public static double Fract(double x) {
-        double ret = x - (int)x;
+        double ret = x - (int) x;
         return ret;
     }
 
@@ -119,11 +104,10 @@ public class Util {
     }
 
     double[] ParseFloats(String[] items) {
-        
+
         double[] result = new double[items.length];
-        
-        for(String item : items)
-        {
+
+        for (String item : items) {
             double f = Double.parseDouble(item);
             ArrayUtils.add(result, f);
         }
@@ -131,21 +115,19 @@ public class Util {
     }
 
     int[] ParseInts(String[] items) {
-        
+
         int[] result = new int[items.length];
-        
-        for(String item : items)
-        {
-                int f = Integer.valueOf(item);
-                ArrayUtils.add(result, f);
+
+        for (String item : items) {
+            int f = Integer.valueOf(item);
+            ArrayUtils.add(result, f);
         }
         return result;
     }
-    
+
     static String DurationString(Duration time) {
         return "Current Duration" + time.toString();
     }
-    
 
     static String RelativePath(String path1) {
         Path filepath = Paths.get(path1);
@@ -168,19 +150,5 @@ public class Util {
 
         return intarray;
     }
-    
+
 }
-
-    
-    
-
-    
-   
-
-   
-    
-
-    
-
-
-    

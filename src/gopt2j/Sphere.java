@@ -1,16 +1,16 @@
 package gopt2j;
 
 class Sphere extends TransformedShape implements IShape {
-    
+
     Vector Center;
     double Radius;
-    Material SphereMaterial;
+    Material Material;
     Box Box;
 
     Sphere(Vector center_, double radius_, Material material_, Box box_) {
         Center = center_;
         Radius = radius_;
-        SphereMaterial = material_;
+        Material = material_;
         Box = box_;
     }
 
@@ -23,14 +23,14 @@ class Sphere extends TransformedShape implements IShape {
 
     @Override
     public Box BoundingBox() {
-        return this.Box;
+        return Box;
     }
 
     @Override
     public Hit Intersect(Ray r) {
-        Vector to = r.Origin.Sub(this.Center);
+        Vector to = r.Origin.Sub(Center);
         double b = to.Dot(r.Direction);
-        double c = to.Dot(to) - this.Radius * this.Radius;
+        double c = to.Dot(to) - Radius * Radius;
         double d = b * b - c;
         if (d > 0) {
             d = Math.sqrt(d);
@@ -48,20 +48,20 @@ class Sphere extends TransformedShape implements IShape {
 
     @Override
     public Vector UV(Vector p) {
-        p = p.Sub(Center);
-        double u = Math.atan2(p.Z, p.X);
-        double v = Math.atan2(p.Y, new Vector(p.X, 0, p.Z).Length());
-        u = 1 - (u + Math.PI) / (2 * Math.PI);
-        v = (v + Math.PI / 2) / Math.PI;
-        return new Vector(u, v, 0);
+        //p = p.Sub(Center);
+        var u = Math.atan2(p.Z, p.X);
+            var v = Math.atan2(p.Y, new Vector(p.X, 0, p.Z).Length());
+            u = 1 - (u + Math.PI) / (2 * Math.PI);
+            v = (v + Math.PI / 2) / Math.PI;
+            return new Vector(u, v, 0);      
     }
-    
+
     @Override
     public void Compile() { }
 
     @Override
     public Material MaterialAt(Vector p) {
-        return this.SphereMaterial;
+        return Material;
     }
 
     @Override

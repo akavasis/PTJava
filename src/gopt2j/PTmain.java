@@ -6,21 +6,27 @@ public class PTmain {
 
     public static void main(String[] args) throws InterruptedException, IOException {
 
-        int width = 1920;
-            int height = 1080;
-            Scene scene = new Scene();
-            scene.Add(Sphere.NewSphere(new Vector(1.5, 1.25, 0), 1.25, Material.SpecularMaterial(Colour.HexColor(0x004358), 1.3)));
-            scene.Add(Sphere.NewSphere(new Vector(-1, 1, 2), 1, Material.SpecularMaterial(Colour.HexColor(0xFFE11A), 1.3)));
-            scene.Add(Sphere.NewSphere(new Vector(-2.5, 0.75, 0), 0.75, Material.SpecularMaterial(Colour.HexColor(0xFD7400), 1.3)));
-            scene.Add(Sphere.NewSphere(new Vector(-0.75, 0.5, -1), 0.5, Material.ClearMaterial(1.5, 0)));
-            scene.Add(Cube.NewCube(new Vector(-10, -1, -10), new Vector(10, 0, 10), Material.GlossyMaterial(Colour.White, 1.1, Util.Radians(10))));
-            scene.Add(Sphere.NewSphere(new Vector(-1.5, 4, 0), 0.5, Material.LightMaterial(Colour.White, 30)));
-            Camera camera = Camera.LookAt(new Vector(0, 2, -5), new Vector(0, 0.25, 3), new Vector(0, 1, 0), 45);
-            camera.SetFocus(new Vector(-0.75, 1, -1), 0.1);
-            DefaultSampler sampler = DefaultSampler.NewSampler(4, 8);
-            sampler.SMode = SpecularMode.SpecularModeFirst;
-            Renderer renderer = Renderer.NewRenderer(scene, camera, sampler, width, height);
-            //renderer.FireflySamples = 64;
-            renderer.IterativeRender("sphere.png", 2);
+        Scene scene = new Scene();
+        double r = 0.4;
+        Material material;
+        material = Material.DiffuseMaterial(Colour.HexColor(0x334D5C));
+        scene.Add(Sphere.NewSphere(new Vector(-2, r, 0), r, material));
+        material = Material.SpecularMaterial(Colour.HexColor(0x334D5C), 2);
+        scene.Add(Sphere.NewSphere(new Vector(-1, r, 0), r, material));
+        material = Material.GlossyMaterial(Colour.HexColor(0x334D5C), 2, Util.Radians(50));
+        scene.Add(Sphere.NewSphere(new Vector(0, r, 0), r, material));
+        material = Material.TransparentMaterial(Colour.HexColor(0x334D5C), 2, Util.Radians(20), 1);
+        scene.Add(Sphere.NewSphere(new Vector(1, r, 0), r, material));
+        material = Material.ClearMaterial(2, 0);
+        scene.Add(Sphere.NewSphere(new Vector(2, r, 0), r, material));
+        material = Material.MetallicMaterial(Colour.HexColor(0xFFFFFF), 0, 1);
+        scene.Add(Sphere.NewSphere(new Vector(0, 1.5, -4), 1.5, material));
+        scene.Add(Cube.NewCube(new Vector(-1000, -1, -1000), new Vector(1000, 0, 1000), Material.GlossyMaterial(Colour.HexColor(0xFFFFFF), 1.4, Util.Radians(20))));
+        scene.Add(Sphere.NewSphere(new Vector(0, 5, 0), 1, Material.LightMaterial(Colour.White, 25)));
+        Camera camera = Camera.LookAt(new Vector(0, 3, 6), new Vector(0, 1, 0), new Vector(0, 1, 0), 30);
+        DefaultSampler sampler = DefaultSampler.NewSampler(16, 16);
+        Renderer renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080);
+        renderer.FireflySamples = 32;
+        renderer.IterativeRender("materialspheres.png", 100);
     }
 }
