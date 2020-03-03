@@ -1,7 +1,5 @@
 package gopt2j;
 
-import javafx.util.Pair;
-
 class Box {
 
     public Vector Min;

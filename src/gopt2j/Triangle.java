@@ -1,7 +1,6 @@
 package gopt2j;
 
 class Triangle extends TransformedShape implements IShape {
-
     double INF = 1e9;
     double EPS = 1e-9;
     Material Material;
