@@ -14,23 +14,23 @@ class DefaultSampler implements Sampler {
     int MaxBounces;
     boolean DirectLighting;
     boolean SoftShadows;
-    public LightMode LMode;
-    public SpecularMode SMode;
+    LightMode LightMode;
+    SpecularMode SpecularMode;
 
     DefaultSampler() {
 
     }
 
-    DefaultSampler(int FirstHitSamples, int MaxBounces, boolean DirectLighting, boolean SoftShadows, LightMode LM, SpecularMode SM) {
-        this.FirstHitSamples = FirstHitSamples;
-        this.MaxBounces = MaxBounces;
-        this.DirectLighting = DirectLighting;
-        this.SoftShadows = SoftShadows;
-        this.LMode = LM;
-        this.SMode = SM;
+    DefaultSampler(int FirstHitSamples_, int MaxBounces_, boolean DirectLighting_, boolean SoftShadows_, LightMode LightMode_, SpecularMode SpecularMode_) {
+        FirstHitSamples = FirstHitSamples_;
+        MaxBounces = MaxBounces_;
+        DirectLighting = DirectLighting_;
+        SoftShadows = SoftShadows_;
+        LightMode = LightMode_;
+        SpecularMode = SpecularMode_;
     }
 
-    static DefaultSampler NewSampler(int firstHitSamples, int maxBounces) {
+    DefaultSampler NewSampler(int firstHitSamples, int maxBounces) {
         return new DefaultSampler(firstHitSamples, maxBounces, true, true, LightMode.LightModeRandom, SpecularMode.SpecularModeNaive);
     }
 
@@ -41,7 +41,7 @@ class DefaultSampler implements Sampler {
     @Override
     public Colour Sample(Scene scene, Ray ray, Random rand) {
 
-        return this.sample(scene, ray, true, this.FirstHitSamples, 0, rand);
+        return sample(scene, ray, true, FirstHitSamples, 0, rand);
     }
 
     Colour sample(Scene scene, Ray ray, boolean emission, int samples, int depth, Random rand) {
@@ -69,7 +69,7 @@ class DefaultSampler implements Sampler {
         int n = (int) Math.sqrt(samples);
         BounceType ma, mb;
 
-        if (SMode.equals(SpecularMode.SpecularModeAll) || (depth == 0 && SMode.equals(SpecularMode.SpecularModeFirst))) {
+        if (SpecularMode.equals(SpecularMode.SpecularModeAll) || (depth == 0 && SpecularMode.equals(SpecularMode.SpecularModeFirst))) {
             ma = BounceType.BounceTypeDiffuse;
             mb = BounceType.BounceTypeSpecular;
         } else {
@@ -79,17 +79,12 @@ class DefaultSampler implements Sampler {
 
         for (int u = 0; u < n; u++) {
             for (int v = 0; v < n; v++) {
-                
-
                 for (int i = ma.ordinal(); i <= mb.ordinal(); i++) {
                     double fu = ((double) u + rand.nextDouble()) / (double) n;
                     double fv = ((double) v + rand.nextDouble()) / (double) n;
-
-                    //(var newRay, var reflected, var p) 
                     Ray newRay = ray.Bounce(info, fu, fv, BounceType.values()[i], rand);
 
                     if (BounceType.values()[i] == BounceType.BounceTypeAny) {
-                        //if (mode == BounceType.BounceTypeAny) {
                         newRay.bouncep = 1;
                     }
 
@@ -110,7 +105,7 @@ class DefaultSampler implements Sampler {
                         }
                         result = result.Add(material.Color.Mul(direct.Add(indirect)).MulScalar(newRay.bouncep));
                     }
-                    // mode = mb;
+                    i = mb.ordinal();
                 }
             }
         }
@@ -135,7 +130,7 @@ class DefaultSampler implements Sampler {
             return Colour.Black;
         }
 
-        if (LMode.equals(LightMode.LightModeAll)) {
+        if (LightMode.equals(LightMode.LightModeAll)) {
             Colour result = new Colour();
             for (IShape light : scene.Lights) {
                 if (light != null) {
@@ -152,11 +147,10 @@ class DefaultSampler implements Sampler {
         }
     }
 
-    Colour sampleLight(Scene scene, Ray n, Random rand, IShape light) 
-    {
+    Colour sampleLight(Scene scene, Ray n, Random rand, IShape light) {
         Vector center = new Vector();
         double radius = 0;
-        
+
         if (light != null) {
             if (light instanceof Sphere) {
                 radius = ((Sphere) light).Radius;
@@ -169,7 +163,7 @@ class DefaultSampler implements Sampler {
         }
 
         Vector point = center;
-        
+
         if (SoftShadows) {
             for (;;) {
                 double x = (rand.nextDouble() * 2) - 1;

@@ -19,10 +19,8 @@ class Scene {
     }
 
     public void Compile() {
-        for (IShape shape : Shapes) 
-        {
-            if(shape != null)
-            {
+        for (IShape shape : Shapes) {
+            if (shape != null) {
                 shape.Compile();
             }
         }

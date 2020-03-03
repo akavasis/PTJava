@@ -7,12 +7,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.stat.descriptive.rank.Median;
 
 public class Util {
 
     public static double INF = 1e9;
     public static double EPS = 1e-9;
+
+    public static int swapInt(int... args) {
+        return args[0];
+    }
+
+    public static double swapDouble(double... args) {
+        return args[0];
+    }
 
     public static double Radians(double degrees) {
         return degrees * Math.PI / 180;
@@ -41,29 +48,18 @@ public class Util {
         return d;
     }
 
-    // Using Apache Maths 
-    //static double Median(double[] items) {
-    //    Median median = new Median();
-    //    double medianValue = median.evaluate(items);
-    //    return medianValue;
-    //}
-
     static double Median(List<Double> a) {
-
         int middle = a.size() / 2;
-
         if (a.size() % 2 == 1) {
             return a.get(middle);
         } else {
             return (a.get(middle - 1) + a.get(middle)) / 2.0;
         }
-
     }
 
     double Median(double[] items) {
         var n = items.length;
         if (n == 0) {
-
             return 0;
         } else if (n % 2 == 1) {
             return items[items.length / 2];
@@ -104,9 +100,7 @@ public class Util {
     }
 
     double[] ParseFloats(String[] items) {
-
         double[] result = new double[items.length];
-
         for (String item : items) {
             double f = Double.parseDouble(item);
             ArrayUtils.add(result, f);
@@ -115,9 +109,7 @@ public class Util {
     }
 
     int[] ParseInts(String[] items) {
-
         int[] result = new int[items.length];
-
         for (String item : items) {
             int f = Integer.valueOf(item);
             ArrayUtils.add(result, f);
@@ -131,7 +123,6 @@ public class Util {
 
     static String RelativePath(String path1) {
         Path filepath = Paths.get(path1);
-
         return filepath.relativize(filepath).toString();
     }
 
@@ -141,14 +132,11 @@ public class Util {
 
     static double[] ParseFloats_(String[] items) {
         double[] doublearray = Arrays.stream(items).mapToDouble(Double::parseDouble).toArray();
-
         return doublearray;
     }
 
     static int[] ParseInts_(String[] items) {
         int[] intarray = Arrays.stream(items).mapToInt(Integer::parseInt).toArray();
-
         return intarray;
     }
-
 }

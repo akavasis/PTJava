@@ -1,14 +1,8 @@
 package gopt2j;
 
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import static java.lang.Math.floor;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
 
 class Buffer {
 
@@ -18,7 +12,10 @@ class Buffer {
     byte[] imageBuffer;
 
     public enum Channel {
-        ColorChannel, VarianceChannel, StandardDeviationChannel, SamplesChannel
+        ColorChannel, 
+        VarianceChannel, 
+        StandardDeviationChannel, 
+        SamplesChannel
     }
 
     Buffer() {
@@ -79,14 +76,7 @@ class Buffer {
 
     BufferedImage Image(Buffer buf, Channel channel) {
 
-        //ColorSpace myColorSpace = new FloatCS(channel == 1 ? ColorSpace.TYPE_GRAY : ColorSpace.TYPE_RGB, channel) ;
-        //ColorModel myColorModel = new ComponentColorModel(myColorSpace,null,false,false,ColorModel.OPAQUE,DataBuffer.TYPE_DOUBLE) ;
-        //BufferedImage(myColorModel, myColorModel.createCompatibleWritableRaster(width, height), false, null) ;
-        //BufferedImage renderedImage = new BufferedImage(this.W, this.H, BufferedImage.TYPE_INT_RGB);
-        
         BufferedImage renderedImage = new BufferedImage(this.W, this.H, BufferedImage.TYPE_INT_RGB);
-        WritableImage wr = new WritableImage(W,H);
-        PixelWriter pw = wr.getPixelWriter();
         
         double maxSamples = 0;
         if (channel == Channel.SamplesChannel) {
@@ -99,7 +89,6 @@ class Buffer {
 
         for (int y = 0; y < this.H; y++) {
             for (int x = 0; x < this.W; x++) {
-
                 switch (channel) {
                     case ColorChannel:
                         pixelColor = Pixels[y * W + x].Color().Pow(1 / 2.2);
@@ -115,20 +104,6 @@ class Buffer {
                         pixelColor = new Colour(p, p, p);
                         break;
                 }
-                //int a = (int)(Math.random()*256); //alpha
-                //int r = (int)(Math.random()*256); //red
-                //int g = (int)(Math.random()*256); //green
-                //int b = (int)(Math.random()*256); //blue
-                //renderedImage.setRGB(x, y, pixelColor.getIntFromColor(pixelColor.R, pixelColor.G, pixelColor.B));
-                //renderedImage.setRGB(x, y, 255 << 24 | (int) pixelColor.r << 16 | (int) pixelColor.g << 8 | (int) pixelColor.b);
-                //System.out.println("RGB=" + pixelColor.r + " " + pixelColor.g + " " + pixelColor.b +"\r");
-                //renderedImage.setRGB(x, y, (a<<24) | (r<<16) | (g<<8) | b );
-                //Color c = Color.color((float)pixelColor.r, (float)pixelColor.g, (float)pixelColor.b);
-                //pw.setArgb(x, y, c.deriveColor(maxSamples, maxSamples, maxSamples, maxSamples));
-                //byte r = (byte) Math.floor(pixelColor.r >= 1.0 ? 255 : pixelColor.r * 256.0);
-                //byte g = (byte) Math.floor(pixelColor.g >= 1.0 ? 255 : pixelColor.g * 256.0);
-                //byte b = (byte) Math.floor(pixelColor.b >= 1.0 ? 255 : pixelColor.b * 256.0);
-                //max(0, min(255, (int)floor(f * 256.0))
                 int r = Math.max(0, Math.min(255, (int)(Math.floor(pixelColor.r * 256.0))));
                 int g = Math.max(0, Math.min(255, (int)(Math.floor(pixelColor.g * 256.0))));
                 int b = Math.max(0, Math.min(255, (int)(Math.floor(pixelColor.b * 256.0))));

@@ -74,13 +74,6 @@ public class Colour {
         return 255 << 24 | r << 16 | g << 8 | b;
     }
 
-    //public int getIntFromColor64(double red, double green, double blue)
-    //{
-    //    byte r = (byte)Convert.ToUInt16(Math.Max(0, Math.Min(65535, red * 65535)));
-    //    byte g = (byte)Convert.ToUInt16(Math.Max(0, Math.Min(65535, green * 65535)));
-    //    byte b = (byte)Convert.ToUInt16(Math.Max(0, Math.Min(65535, blue * 65535)));
-    //    return 65535 << 24 | r << 16 | g << 8 | b;
-    //}
     public static Colour Kelvin(double K) {
         double red, green, blue;
         double a, b, c, x;
@@ -117,9 +110,7 @@ public class Colour {
             b = 0.8274096064007395;
             c = 115.67994401066147;
             x = K / 100 - 10;
-
             blue = a + b * x + c * Math.log(x);
-
         } else {
             blue = 0;
         }

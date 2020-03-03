@@ -1,11 +1,8 @@
 package gopt2j;
 
-import javafx.util.Pair;
-
 class Volume extends TransformedShape implements IShape {
 
     public class VolumeWindow {
-
         double Lo, Hi;
         Material Material;
 
@@ -65,7 +62,6 @@ class Volume extends TransformedShape implements IShape {
 
         // w/g aspect ratio TODO
         double zs = (sliceSpacing * (double) d) / (double) w;
-        //double[w*h*d] data; //data := make([]float64, w*h*d)
         for (Image image : images) {
             for (int y = 0; y < h; y++) {
                 for (int x = 0; x < w; x++) {
@@ -77,7 +73,6 @@ class Volume extends TransformedShape implements IShape {
                 }
             }
         }
-        //return &Volume{w, h, d, zs, data, windows, box}        
         return new Volume(w, h, d, zs, null, windows, box);
     }
 
@@ -112,15 +107,14 @@ class Volume extends TransformedShape implements IShape {
         double c = c0 * (1 - z) + c1 * z;
         return c;
     }
-    
+
     @Override
     public Box BoundingBox() {
-        return this.Box;
+        return Box;
     }
 
     @Override
     public void Compile() {
-
     }
 
     int Sign(Vector a) {
@@ -136,7 +130,7 @@ class Volume extends TransformedShape implements IShape {
         }
         return this.Windows.length + 1;
     }
-    
+
     @Override
     public Vector UV(Vector p) {
         return new Vector();
@@ -156,7 +150,6 @@ class Volume extends TransformedShape implements IShape {
         double be = 1e9;
         Material bm = null;
         double s = this.Sample(p.X, p.Y, p.Z);
-
         for (VolumeWindow Window : this.Windows) {
             if (s >= Window.Lo && s <= Window.Hi) {
                 return Window.Material;
@@ -172,17 +165,15 @@ class Volume extends TransformedShape implements IShape {
 
     @Override
     public Hit Intersect(Ray ray) {
-        Pair<Double, Double> tbool = this.Box.Intersect(ray);
-        double tmin = tbool.getKey();
-        double tmax = tbool.getValue();
-
+        Double[] tbool = this.Box.Intersect(ray);
+        double tmin = tbool[1];
+        double tmax = tbool[2];
         double step = 1.0 / 512;
         double start = Math.max(step, tmin);
         int sign = -1;
         for (double t = start; t <= tmax; t += step) {
             Vector p = ray.Position(t);
             int s = this.Sign(p);
-
             if (s == 0 || (sign >= 0 && s != sign)) {
                 t -= step;
                 step /= 64;

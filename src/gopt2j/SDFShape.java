@@ -7,7 +7,6 @@ interface SDF {
     double Evaluate(Vector p);
 
     Box BoundingBox();
-
 }
 
 class SDFShape extends TransformedShape implements SDF, IShape {
@@ -40,14 +39,17 @@ class SDFShape extends TransformedShape implements SDF, IShape {
         double start = 0.0001;
         double jumpSize = 0.001;
         Box box = this.BoundingBox();
-        Pair<Double, Double> t_ = box.Intersect(ray);
-        double t1 = t_.getKey();
-        double t2 = t_.getValue();
+        Double[] t_ = box.Intersect(ray);
+        double t1 = t_[0];
+        double t2 = t_[1];
+
         if (t2 < t1 || t2 < 0) {
             return Hit.NoHit;
         }
+
         double t = Math.max(start, t1);
         boolean jump = true;
+
         for (int i = 0; i < 1000; i++) {
             //this.Evaluate(ray.Position(t));
         }
@@ -66,7 +68,6 @@ class SDFShape extends TransformedShape implements SDF, IShape {
         double x = p.X;
         double y = p.Y;
         double z = p.Z;
-
         return new Vector(this.Evaluate(new Vector(x - e, y, z)) - this.Evaluate(new Vector(x + e, y, z)),
                 this.Evaluate(new Vector(x, y - e, z)) - this.Evaluate(new Vector(x, y + e, z)),
                 this.Evaluate(new Vector(x, y, z - e)) - this.Evaluate(new Vector(x, y, z + e)));
@@ -74,7 +75,7 @@ class SDFShape extends TransformedShape implements SDF, IShape {
 
     @Override
     public double Evaluate(Vector p) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     class SphereSDF implements SDF {
@@ -89,7 +90,7 @@ class SDFShape extends TransformedShape implements SDF, IShape {
 
         @Override
         public double Evaluate(Vector p) {
-            return p.LengthN(this.Exponent) - this.Radius;
+            return p.LengthN(Exponent) - Radius;
         }
 
         SDF NewSphereSDF(double radius) {
@@ -98,7 +99,7 @@ class SDFShape extends TransformedShape implements SDF, IShape {
 
         @Override
         public Box BoundingBox() {
-            double r = this.Radius;
+            double r = Radius;
             return new Box(new Vector(-r, -r, -r), new Vector(r, r, r));
         }
     }
@@ -108,7 +109,7 @@ class SDFShape extends TransformedShape implements SDF, IShape {
         Vector Size;
 
         CubeSDF(Vector size) {
-            this.Size = size;
+            Size = size;
         }
 
         SDF NewCubeSDF(Vector size) {
@@ -118,10 +119,9 @@ class SDFShape extends TransformedShape implements SDF, IShape {
         @Override
         public Box BoundingBox() {
             double x, y, z;
-            x = this.Size.X / 2;
-            y = this.Size.Y / 2;
-            z = this.Size.Z / 2;
-
+            x = Size.X / 2;
+            y = Size.Y / 2;
+            z = Size.Z / 2;
             return new Box(new Vector(-y, -y, -z), new Vector(x, y, z));
         }
 
@@ -134,9 +134,11 @@ class SDFShape extends TransformedShape implements SDF, IShape {
             if (x < 0) {
                 x = -x;
             }
+
             if (y < 0) {
                 y = -y;
             }
+
             if (z < 0) {
                 z = -z;
             }
@@ -144,26 +146,32 @@ class SDFShape extends TransformedShape implements SDF, IShape {
             x -= this.Size.X / 2;
             y -= this.Size.Y / 2;
             z -= this.Size.Z / 2;
-
             double a = x;
+
             if (y > a) {
                 a = y;
             }
+
             if (z > a) {
                 a = z;
             }
+
             if (a > 0) {
                 a = 0;
             }
+
             if (x < 0) {
                 x = 0;
             }
+
             if (y < 0) {
                 y = 0;
             }
+
             if (z < 0) {
                 z = 0;
             }
+
             double b = Math.sqrt(x * x + y * y + z * z);
             return a + b;
         }
@@ -186,8 +194,8 @@ class SDFShape extends TransformedShape implements SDF, IShape {
 
         @Override
         public Box BoundingBox() {
-            double r = this.Radius;
-            double h = this.Height / 2;
+            double r = Radius;
+            double h = Height / 2;
             return new Box(new Vector(-r, -h, -r), new Vector(r, h, r));
         }
 
@@ -198,22 +206,27 @@ class SDFShape extends TransformedShape implements SDF, IShape {
             if (x < 0) {
                 x = -x;
             }
+
             if (y < 0) {
                 y = -y;
             }
+
             x -= this.Radius;
             y -= this.Height / 2;
-
             double a = x;
+
             if (y > a) {
                 a = y;
             }
+
             if (a > 0) {
                 a = 0;
             }
+
             if (x < 0) {
                 x = 0;
             }
+
             if (y < 0) {
                 y = 0;
             }
@@ -406,6 +419,7 @@ class SDFShape extends TransformedShape implements SDF, IShape {
         public double Evaluate(Vector p) {
             double result = 0;
             int i = 0;
+
             for (SDF item : this.Items) {
                 double d = item.Evaluate(p);
                 if (i == 0) {
@@ -415,6 +429,7 @@ class SDFShape extends TransformedShape implements SDF, IShape {
                 }
                 i++;
             }
+
             return result;
         }
 
@@ -436,6 +451,7 @@ class SDFShape extends TransformedShape implements SDF, IShape {
         public double Evaluate(Vector p) {
             double result = 0;
             int i = 0;
+
             for (SDF item : this.Items) {
                 double d = item.Evaluate(p);
                 if (i == 0 || d > result) {
@@ -443,6 +459,7 @@ class SDFShape extends TransformedShape implements SDF, IShape {
                 }
                 i++;
             }
+
             return result;
         }
 
@@ -450,6 +467,7 @@ class SDFShape extends TransformedShape implements SDF, IShape {
         public Box BoundingBox() {
             Box result = null;
             int i = 0;
+
             for (SDF item : this.Items) {
                 Box box = item.BoundingBox();
                 if (i == 0) {
@@ -459,6 +477,7 @@ class SDFShape extends TransformedShape implements SDF, IShape {
                 }
                 i++;
             }
+
             return result;
         }
     }
@@ -469,14 +488,14 @@ class SDFShape extends TransformedShape implements SDF, IShape {
         Vector Step;
 
         RepeatSDF(SDF sdf, Vector step) {
-            this.SDF = sdf;
-            this.Step = step;
+            SDF = sdf;
+            Step = step;
         }
 
         @Override
         public double Evaluate(Vector p) {
-            Vector q = p.Mod(this.Step).Sub(this.Step.DivScalar(2));
-            return this.SDF.Evaluate(q);
+            Vector q = p.Mod(Step).Sub(Step.DivScalar(2));
+            return SDF.Evaluate(q);
         }
 
         @Override

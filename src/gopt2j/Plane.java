@@ -8,14 +8,13 @@ class Plane extends TransformedShape implements IShape {
     Box box;
 
     Plane() {
-
     }
 
     Plane(Vector point, Vector normal, Material mat) {
-        this.Point = point;
-        this.Normal = normal;
-        this.Material = mat;
-        this.box = new Box(new Vector(-Util.INF, -Util.INF, -Util.INF), new Vector(Util.INF, Util.INF, Util.INF));
+        Point = point;
+        Normal = normal;
+        Material = mat;
+        box = new Box(new Vector(-Util.INF, -Util.INF, -Util.INF), new Vector(Util.INF, Util.INF, Util.INF));
     }
 
     public static Plane NewPlane(Vector point, Vector normal, Material material) {
@@ -30,14 +29,18 @@ class Plane extends TransformedShape implements IShape {
     @Override
     public Hit Intersect(Ray ray) {
         double d = this.Normal.Dot(ray.Direction);
+
         if (Math.abs(d) < Util.EPS) {
             return Hit.NoHit;
         }
+
         Vector a = this.Point.Sub(ray.Origin);
         double t = a.Dot(this.Normal) / d;
+
         if (t < Util.EPS) {
             return Hit.NoHit;
         }
+
         return new Hit(this, t, null);
     }
 

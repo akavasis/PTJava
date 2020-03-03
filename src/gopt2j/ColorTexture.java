@@ -3,11 +3,16 @@ package gopt2j;
 import java.util.Arrays;
 
 interface Texture {
-	Colour Sample(double u, double v);
-	Vector NormalSample(double u, double v);
-	Vector BumpSample(double u, double v);
-	Texture Pow(double a);
-	Texture MulScalar(double a);
+
+    Colour Sample(double u, double v);
+
+    Vector NormalSample(double u, double v);
+
+    Vector BumpSample(double u, double v);
+
+    Texture Pow(double a);
+
+    Texture MulScalar(double a);
 }
 
 class ColorTexture implements Texture {
@@ -22,7 +27,7 @@ class ColorTexture implements Texture {
     ColorTexture() {
         this.Width = 0;
         this.Height = 0;
-        this.Data = new Colour[Height*Width+Width];
+        this.Data = new Colour[Height * Width + Width];
         Arrays.fill(this.Data, new Colour(0, 0, 0));
     }
 
@@ -36,7 +41,6 @@ class ColorTexture implements Texture {
     public Colour Sample(double u, double v) {
         u = Util.Fract((Util.Fract(u)) + 1);
         v = Util.Fract((Util.Fract(v)) + 1);
-
         return this.bilinearSample(u, 1 - v);
     }
 
@@ -44,6 +48,7 @@ class ColorTexture implements Texture {
         if (u == 1) {
             u -= EPS;
         }
+
         if (v == 1) {
             v -= EPS;
         }
@@ -52,7 +57,6 @@ class ColorTexture implements Texture {
         double h = this.Height - 1;
         int X, Y, x0, y0, x1, y1;
         double x, y;
-
         X = (int) (u * w);
         Y = (int) (v * h);
         x = Util.Fract(u * w);
@@ -61,14 +65,11 @@ class ColorTexture implements Texture {
         y0 = (int) (Y);
         x1 = x0 + 1;
         y1 = y0 + 1;
-        
-        Colour c00 = this.Data[y0*this.Width+x0];
-        Colour c01 = this.Data[y1*this.Width+x0];
-        Colour c10 = this.Data[y0*this.Width+x1];
-        Colour c11 = this.Data[y1*this.Width+x1];
-        Colour c = new Colour(0,0,0);
-        
-        
+        Colour c00 = this.Data[y0 * this.Width + x0];
+        Colour c01 = this.Data[y1 * this.Width + x0];
+        Colour c10 = this.Data[y0 * this.Width + x1];
+        Colour c11 = this.Data[y1 * this.Width + x1];
+        Colour c = new Colour(0, 0, 0);
         c = c.Add(c00.MulScalar((1 - x) * (1 - y)));
         c = c.Add(c10.MulScalar(x * (1 - y)));
         c = c.Add(c01.MulScalar((1 - x) * y));

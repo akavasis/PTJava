@@ -3,7 +3,7 @@ package gopt2j;
 public class Hit {
 
     static final double INF = 1e9;
-    public IShape Shape;
+    IShape Shape;
     public double T;
     public HitInfo HitInfo;
 
@@ -20,11 +20,13 @@ public class Hit {
         if (this.HitInfo != null) {
             return this.HitInfo;
         }
+
         IShape shape = this.Shape;
         Vector position = r.Position(this.T);
         Vector normal = this.Shape.NormalAt(position);
         Material material = Material.MaterialAt(this.Shape, normal);
         Boolean inside = false;
+
         if (normal.Dot(r.Direction) > 0) {
             normal = normal.Negate();
             inside = true;
@@ -32,6 +34,7 @@ public class Hit {
                 inside = false;
             }
         }
+
         Ray ray = new Ray(position, normal);
         return new HitInfo(Shape, position, normal, ray, material, inside);
     }

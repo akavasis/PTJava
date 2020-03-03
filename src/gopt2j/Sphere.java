@@ -38,26 +38,29 @@ class Sphere extends TransformedShape implements IShape {
             if (t1 > Util.EPS) {
                 return new Hit(this, t1, null);
             }
+
             double t2 = -b + d;
             if (t2 > Util.EPS) {
                 return new Hit(this, t2, null);
             }
+
         }
         return Hit.NoHit;
     }
 
     @Override
     public Vector UV(Vector p) {
-        //p = p.Sub(Center);
+        p = p.Sub(Center);
         var u = Math.atan2(p.Z, p.X);
-            var v = Math.atan2(p.Y, new Vector(p.X, 0, p.Z).Length());
-            u = 1 - (u + Math.PI) / (2 * Math.PI);
-            v = (v + Math.PI / 2) / Math.PI;
-            return new Vector(u, v, 0);      
+        var v = Math.atan2(p.Y, new Vector(p.X, 0, p.Z).Length());
+        u = 1 - (u + Math.PI) / (2 * Math.PI);
+        v = (v + Math.PI / 2) / Math.PI;
+        return new Vector(u, v, 0);
     }
 
     @Override
-    public void Compile() { }
+    public void Compile() {
+    }
 
     @Override
     public Material MaterialAt(Vector p) {

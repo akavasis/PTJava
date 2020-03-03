@@ -13,11 +13,11 @@ public class Image {
     
     int GetWidth()
     {
-        return this.x;
+        return x;
     }
     
     int GetHeight()
     {
-        return this.y;
+        return y;
     }
 }

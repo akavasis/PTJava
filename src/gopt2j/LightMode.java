@@ -27,7 +27,7 @@ package gopt2j;
  *
  * @author akava
  */
-public enum LightMode 
-{
-        LightModeRandom, LightModeAll
+enum LightMode {
+    LightModeRandom,
+    LightModeAll
 }

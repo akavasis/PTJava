@@ -29,10 +29,10 @@ class Tree {
     }
 
     public Hit Intersect(Ray r) {
-        Pair<Double, Double> tm = this.Box.Intersect(r);
+        Double[] tm = this.Box.Intersect(r);
 
-        double tmin = tm.getKey();
-        double tmax = tm.getValue();
+        double tmin = tm[0];
+        double tmax = tm[1];
 
         if (tmax < tmin || tmax <= 0) {
             return Hit.NoHit;
@@ -154,11 +154,11 @@ class Tree {
                 if(shape !=null)
                 {
                     Box box = shape.BoundingBox();
-                    Pair<Boolean, Boolean> lr = box.Partition(axis, point);
-                    if (lr.getKey()) {
+                    boolean[] lr = box.Partition(axis, point);
+                    if (lr[0]) {
                         left++;
                     }
-                    if (lr.getValue()) {
+                    if (lr[1]) {
                         right++;
                     }
                 }
@@ -181,14 +181,14 @@ class Tree {
                 if (shape != null) {
                     Box box = shape.BoundingBox();
 
-                    Pair<Boolean, Boolean> lr = box.Partition(axis, point);
+                    boolean[] lr = box.Partition(axis, point);
 
-                    if (lr.getKey()) {
+                    if (lr[0]) {
                         //ArrayUtils.add(left, shape);
                         left.add(shape);
                     }
 
-                    if (lr.getValue()) {
+                    if (lr[1]) {
                         //ArrayUtils.add(right, shape);
                         right.add(shape);
                     }

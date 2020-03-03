@@ -27,8 +27,8 @@ package gopt2j;
  *
  * @author akava
  */
-public  enum BounceType {
-        BounceTypeAny, 
-        BounceTypeDiffuse, 
-        BounceTypeSpecular
+public enum BounceType {
+    BounceTypeAny,
+    BounceTypeDiffuse,
+    BounceTypeSpecular
 }

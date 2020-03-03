@@ -27,6 +27,8 @@ package gopt2j;
  *
  * @author akava
  */
-public enum SpecularMode {
-        SpecularModeNaive, SpecularModeFirst, SpecularModeAll
+enum SpecularMode {
+        SpecularModeNaive, 
+        SpecularModeFirst, 
+        SpecularModeAll
 }

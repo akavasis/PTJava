@@ -28,8 +28,8 @@ package gopt2j;
  * @author akava
  */
 public enum Axis {
-        AxisNone, 
-        AxisX, 
-        AxisY, 
-        AxisZ
+    AxisNone,
+    AxisX,
+    AxisY,
+    AxisZ
 }

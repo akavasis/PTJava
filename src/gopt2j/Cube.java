@@ -30,7 +30,7 @@ class Cube extends TransformedShape implements IShape {
     @Override
     public Box BoundingBox()
     {
-        return this.Box;
+        return Box;
     }
     
     @Override

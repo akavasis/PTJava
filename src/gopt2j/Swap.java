@@ -29,11 +29,5 @@ package gopt2j;
  */
 class Swap
 {
-	public static int swapInt(int... args) {
-		return args[0];
-	}
-
-	public static double swapDouble(double... args) {
-            return args[0];
-        }
+	
 }
