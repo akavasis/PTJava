@@ -1,6 +1,7 @@
 package gopt2j;
 
 class Triangle extends TransformedShape implements IShape {
+
     double INF = 1e9;
     double EPS = 1e-9;
     Material Material;
@@ -101,42 +102,42 @@ class Triangle extends TransformedShape implements IShape {
 
     @Override
     public Hit Intersect(Ray r) {
-        double e1x = V2.X - V1.X;
-        double e1y = V2.Y - V1.Y;
-        double e1z = V2.Z - V1.Z;
-        double e2x = V3.X - V1.X;
-        double e2y = V3.Y - V1.Y;
-        double e2z = V3.Z - V1.Z;
-        double px = r.Direction.Y * e2z - r.Direction.Z * e2y;
-        double py = r.Direction.Z * e2x - r.Direction.X * e2z;
-        double pz = r.Direction.X * e2y - r.Direction.Y * e2x;
-        double det = e1x * px + e1y * py + e1z * pz;
+        var e1x = V2.X - V1.X;
+        var e1y = V2.Y - V1.Y;
+        var e1z = V2.Z - V1.Z;
+        var e2x = V3.X - V1.X;
+        var e2y = V3.Y - V1.Y;
+        var e2z = V3.Z - V1.Z;
+        var px = r.Direction.Y * e2z - r.Direction.Z * e2y;
+        var py = r.Direction.Z * e2x - r.Direction.X * e2z;
+        var pz = r.Direction.X * e2y - r.Direction.Y * e2x;
+        var det = e1x * px + e1y * py + e1z * pz;
 
         if (det > -Util.EPS && det < Util.EPS) {
             return Hit.NoHit;
         }
 
-        double inv = 1 / det;
-        double tx = r.Origin.X - V1.X;
-        double ty = r.Origin.Y - V1.Y;
-        double tz = r.Origin.Z - V1.Z;
-        double u = (tx * px + ty * py + tz * pz) * inv;
+        var inv = 1 / det;
+        var tx = r.Origin.X - V1.X;
+        var ty = r.Origin.Y - V1.Y;
+        var tz = r.Origin.Z - V1.Z;
+        var u = (tx * px + ty * py + tz * pz) * inv;
 
         if (u < 0 || u > 1) {
             return Hit.NoHit;
         }
 
-        double qx = ty * e1z - tz * e1y;
-        double qy = tz * e1x - tx * e1z;
-        double qz = tx * e1y - ty * e1x;
-        double v = (r.Direction.X * qx + r.Direction.Y * qy + r.Direction.Z * qz) * inv;
+        var qx = ty * e1z - tz * e1y;
+        var qy = tz * e1x - tx * e1z;
+        var qz = tx * e1y - ty * e1x;
+        var v = (r.Direction.X * qx + r.Direction.Y * qy + r.Direction.Z * qz) * inv;
 
         if ((v < 0) || ((u + v) > 1)) {
             return Hit.NoHit;
 
         }
 
-        double d = (e2x * qx + e2y * qy + e2z * qz) * inv;
+        var d = (e2x * qx + e2y * qy + e2z * qz) * inv;
 
         if (d < Util.EPS) {
             return Hit.NoHit;

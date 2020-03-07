@@ -55,13 +55,14 @@ public class Colour {
         return new Colour((double) r / 65535, (double) g / 65535, (double) b / 65535);
     }
 
-    public static Colour HexColor(int x) {
-        double red = ((x >> 16) & 0xff) / 255;
-        double green = ((x >> 8) & 0xff) / 255;
-        double blue = (x & 0xff) / 255;
-        Colour color = new Colour(red, green, blue);
-        return color.Pow(2.2);
-    }
+    public static Colour HexColor(int x)
+        {
+            double red = ((double)((x >> 16) & 0xff)) / 255;
+            double green = ((double)((x >> 8) & 0xff)) / 255;
+            double blue = ((double)(x & 0xff))/ 255;
+            Colour color = new Colour(red, green, blue);
+            return color.Pow(2.2);
+        }
 
     public Colour Pow(double b) {
         return new Colour(Math.pow(r, b), Math.pow(g, b), Math.pow(this.b, b));

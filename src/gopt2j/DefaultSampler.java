@@ -44,6 +44,14 @@ class DefaultSampler implements Sampler {
         return sample(scene, ray, true, FirstHitSamples, 0, rand);
     }
 
+    public void SetSpecularMode(SpecularMode s) {
+        SpecularMode = s;
+    }
+
+    public void SetLightMode(LightMode l) {
+        LightMode = l;
+    }
+
     Colour sample(Scene scene, Ray ray, boolean emission, int samples, int depth, Random rand) {
         if (depth > MaxBounces) {
             return Colour.Black;
@@ -136,10 +144,8 @@ class DefaultSampler implements Sampler {
                 if (light != null) {
                     result = result.Add(sampleLight(scene, n, rand, light));
                 }
-
             }
             return result;
-
         } else {
             // pick a random light
             IShape light = scene.Lights[rand.nextInt(nLights)];

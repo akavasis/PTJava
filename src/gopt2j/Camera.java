@@ -27,10 +27,10 @@ class Camera {
         apertureRadius = apertureRadius_;
     }
 
-    public Ray CastRay(int x, int y, int w, int h, double u, double v, Random rand) {
-        double aspect = (double) w / (double) h;
-        double px = (((double) x + u - 0.5) / ((double) w - 1)) * 2 - 1;
-        double py = (((double) y + v - 0.5) / ((double) h - 1)) * 2 - 1;
+    public Ray CastRay(int x, int y, Integer w_, int h_, Double u_, Double v_, Random rand) {
+        double aspect = (double) w_ / (double) h_;
+        double px = (((double) x + u_ - 0.5) / ((double) w_ - 1)) * 2 - 1;
+        double py = (((double) y + v_ - 0.5) / ((double) h_ - 1)) * 2 - 1;
         Vector d = new Vector();
         d = d.Add(this.u.MulScalar(-px * aspect));
         d = d.Add(this.v.MulScalar(-py));
