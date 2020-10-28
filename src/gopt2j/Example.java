@@ -71,9 +71,7 @@ public class Example {
         camera.SetFocus(new Vector(-0.75, 1, -1), 0.1);
         DefaultSampler sampler = new DefaultSampler().NewSampler(4, 8);
         sampler.SpecularMode = SpecularMode.SpecularModeFirst;
-        Renderer renderer = Renderer.NewRenderer(scene, camera, sampler, 1920 / 2, 1080 / 2);
-        renderer.AdaptiveSamples = 32;
-        renderer.FireflySamples = 256;
+        Renderer renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
         renderer.IterativeRender("example1.png", 1000);
     }
 
@@ -90,7 +88,6 @@ public class Example {
         Camera camera = Camera.LookAt(new Vector(3, 3, 3), new Vector(0, 0, 0.5), new Vector(0, 0, 1), 50);
         DefaultSampler sampler = new DefaultSampler().NewSampler(4, 4);
         Renderer renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
-        renderer.AdaptiveSamples = 128;
         renderer.IterativeRender("simplesphere.png", 1000);
     }
 

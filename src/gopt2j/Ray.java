@@ -63,7 +63,9 @@ public class Ray {
         double n2 = material.Index;
 
         if (info.inside) {
-            n1 = Util.swapDouble(n2, n2 = n1);
+            double swap = n1;
+            n1 = n2;
+            n2 = swap;           
         }
 
         double p;
@@ -85,11 +87,13 @@ public class Ray {
             Ray reflected = n.Reflect(this);
             reflected.condition = true;
             reflected.bouncep = p;
+            reflected.ConeBounce(material.Gloss, u, v, rand);
             return reflected;
         } else if (material.Transparent) {
             Ray refracted = n.Refract(this, n1, n2);
             refracted.Origin = refracted.Origin.Add(refracted.Direction.MulScalar(1e-4));
             refracted.condition = true;
+            refracted.ConeBounce(material.Gloss, u, v, rand);
             return refracted;
         } else {
             Ray bounced = n.WeightedBounce(u, v, rand);

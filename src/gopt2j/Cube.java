@@ -31,13 +31,15 @@ class Cube extends TransformedShape implements IShape {
 
     @Override
     public Hit Intersect(Ray r) {
-        Vector n = this.Min.Sub(r.Origin).Div(r.Direction);
-        Vector f = this.Max.Sub(r.Origin).Div(r.Direction);
+        Vector n = Min.Sub(r.Origin).Div(r.Direction);
+        Vector f = Max.Sub(r.Origin).Div(r.Direction);
+        
         n = n.Min(f);
         f = n.Max(f);
+        SwapVector(n,f);        
 
-        double t0 = Math.max(Math.max(n.X, n.Y), n.Z);
-        double t1 = Math.min(Math.min(f.X, f.Y), f.Z);
+        var t0 = Math.max(Math.max(n.X, n.Y), n.Z);
+        var t1 = Math.min(Math.min(f.X, f.Y), f.Z);
 
         if (t0 > 0 && t0 < t1) {
             return new Hit(this, t0, null);
@@ -45,10 +47,27 @@ class Cube extends TransformedShape implements IShape {
 
         return Hit.NoHit;
     }
+    
+    public void SwapVector(Vector a, Vector b)
+    {
+        Vector swap = new Vector();
+        swap.X = a.X;
+        swap.Y = a.Y;
+        swap.Z = a.Z;
+        
+        a.X = b.X;
+        a.Y = b.Y;
+        a.Z = b.Z;
+        
+        b.X = swap.X;
+        b.Y = swap.Y;
+        b.Z = swap.Z;
+        
+    }
 
     @Override
     public Vector UV(Vector p) {
-        p = p.Sub(this.Min).Div(this.Max.Sub(this.Min));
+        p = p.Sub(Min).Div(Max.Sub(Min));
         return new Vector(p.X, p.Z, 0);
     }
 

@@ -11,9 +11,9 @@ public class Matrix {
     }
 
     Matrix(double x00_, double x01_, double x02_, double x03_,
-            double x10_, double x11_, double x12_, double x13_,
-            double x20_, double x21_, double x22_, double x23_,
-            double x30_, double x31_, double x32_, double x33_) {
+           double x10_, double x11_, double x12_, double x13_,
+           double x20_, double x21_, double x22_, double x23_,
+           double x30_, double x31_, double x32_, double x33_) {
         x00 = x00_;
         x01 = x01_;
         x02 = x02_;
@@ -37,16 +37,16 @@ public class Matrix {
 
     Matrix Translate(Vector v) {
         return new Matrix(1, 0, 0, v.X,
-                0, 1, 0, v.Y,
-                0, 0, 1, v.Z,
-                0, 0, 0, 1);
+                          0, 1, 0, v.Y,
+                          0, 0, 1, v.Z,
+                          0, 0, 0, 1);
     }
 
     Matrix Scale(Vector v) {
-        return new Matrix(v.X, 0, 0, 0,
-                0, v.Y, 0, 0,
-                0, 0, v.Z, 0,
-                0, 0, 0, 1);
+        return new Matrix(v.X,   0,   0, 0,
+                            0, v.Y,   0, 0,
+                            0,   0, v.Z, 0,
+                            0,   0,   0, 1);
     }
 
     Matrix Rotate(Vector v, double a) {
@@ -155,19 +155,32 @@ public class Matrix {
         //xa, xb = xa.Min(xb), xa.Max(xb)        
         xa = xa.Min(xb);
         xb = xa.Max(xb);
+        
+        
+        
 
         //ya, yb = ya.Min(yb), ya.Max(yb)
         ya = ya.Min(yb);
         yb = ya.Max(yb);
+        
+        var yswap = ya;
+        ya = yb;
+        yb = yswap;
 
         //za, zb = za.Min(zb), za.Max(zb)
         za = za.Min(zb);
         zb = za.Max(zb);
+        
+        var zswap = za;
+        za = zb;
+        zb = zswap;
 
         Vector min = xa.Add(ya).Add(za).Add(t);
         Vector max = xb.Add(yb).Add(zb).Add(t);
         return new Box(min, max);
     }
+    
+    
 
     Matrix Transpose() {
         return new Matrix(x00, x10, x20, x30, x01, x11, x21, x31,

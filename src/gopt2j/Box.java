@@ -71,12 +71,12 @@ class Box {
     }
 
     public Double[] Intersect(Ray r) {
-        double x1 = (Min.X - r.Origin.X) / r.Direction.X;
-        double y1 = (Min.Y - r.Origin.Y) / r.Direction.Y;
-        double z1 = (Min.Z - r.Origin.Z) / r.Direction.Z;
-        double x2 = (Max.X - r.Origin.X) / r.Direction.X;
-        double y2 = (Max.Y - r.Origin.Y) / r.Direction.Y;
-        double z2 = (Max.Z - r.Origin.Z) / r.Direction.Z;
+        var x1 = (Min.X - r.Origin.X) / r.Direction.X;
+        var y1 = (Min.Y - r.Origin.Y) / r.Direction.Y;
+        var z1 = (Min.Z - r.Origin.Z) / r.Direction.Z;
+        var x2 = (Max.X - r.Origin.X) / r.Direction.X;
+        var y2 = (Max.Y - r.Origin.Y) / r.Direction.Y;
+        var z2 = (Max.Z - r.Origin.Z) / r.Direction.Z;
 
         if (x1 > x2) {
             x1 = x1 - x2;

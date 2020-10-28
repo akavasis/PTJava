@@ -29,6 +29,7 @@ class Tree {
     }
 
     public Hit Intersect(Ray r) {
+        
         Double[] tm = this.Box.Intersect(r);
 
         double tmin = tm[0];

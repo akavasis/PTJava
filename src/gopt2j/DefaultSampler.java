@@ -77,7 +77,7 @@ class DefaultSampler implements Sampler {
         int n = (int) Math.sqrt(samples);
         BounceType ma, mb;
 
-        if (SpecularMode.equals(SpecularMode.SpecularModeAll) || (depth == 0 && SpecularMode.equals(SpecularMode.SpecularModeFirst))) {
+        if ((SpecularMode == SpecularMode.SpecularModeAll) || (depth == 0 && SpecularMode == SpecularMode.SpecularModeFirst)) {
             ma = BounceType.BounceTypeDiffuse;
             mb = BounceType.BounceTypeSpecular;
         } else {
@@ -90,6 +90,7 @@ class DefaultSampler implements Sampler {
                 for (int i = ma.ordinal(); i <= mb.ordinal(); i++) {
                     double fu = ((double) u + rand.nextDouble()) / (double) n;
                     double fv = ((double) v + rand.nextDouble()) / (double) n;
+                    
                     Ray newRay = ray.Bounce(info, fu, fv, BounceType.values()[i], rand);
 
                     if (BounceType.values()[i] == BounceType.BounceTypeAny) {
@@ -138,7 +139,7 @@ class DefaultSampler implements Sampler {
             return Colour.Black;
         }
 
-        if (LightMode.equals(LightMode.LightModeAll)) {
+        if (LightMode == LightMode.LightModeAll) {
             Colour result = new Colour();
             for (IShape light : scene.Lights) {
                 if (light != null) {
@@ -168,53 +169,57 @@ class DefaultSampler implements Sampler {
             }
         }
 
-        Vector point = center;
-
-        if (SoftShadows) {
-            for (;;) {
-                double x = (rand.nextDouble() * 2) - 1;
-                double y = (rand.nextDouble() * 2) - 1;
-                if ((x * x) + (y * y) <= 1) {
-                    Vector l = center.Sub(n.Origin).Normalize();
-                    Vector u = l.Cross(Vector.RandomUnitVector(rand)).Normalize();
-                    Vector v = l.Cross(u);
-                    point = new Vector();
-                    point = point.Add(u.MulScalar(x * radius));
-                    point = point.Add(v.MulScalar(y * radius));
-                    point = point.Add(center);
-                    break;
+        var point = center;
+            if (SoftShadows)
+            {
+                for (; ; )
+                {
+                    var x = rand.nextDouble() * 2 - 1;
+                    var y = rand.nextDouble() * 2 - 1;
+                    if (x * x + y * y <= 1)
+                    {
+                        var l = center.Sub(n.Origin).Normalize();
+                        var u = l.Cross(Vector.RandomUnitVector(rand)).Normalize();
+                        var v = l.Cross(u);
+                        point = new Vector();
+                        point = point.Add(u.MulScalar(x * radius));
+                        point = point.Add(v.MulScalar(y * radius));
+                        point = point.Add(center);
+                        break;
+                    }
                 }
             }
-        }
-
-        // construct ray toward light point
-        Ray ray = new Ray(n.Origin, point.Sub(n.Origin).Normalize());
-        // get cosine term
-        double diffuse = ray.Direction.Dot(n.Direction);
-        if (diffuse <= 0) {
-            return Colour.Black;
-        }
-        // check for light visibility
-        Hit hit = scene.Intersect(ray);
-        if (!hit.Ok() || hit.Shape != light) {
-            return Colour.Black;
-        }
-        // compute solid angle (hemisphere coverage)
-        double hyp = center.Sub(n.Origin).Length();
-        double opp = radius;
-        double theta = Math.asin(opp / hyp);
-        double adj = opp / Math.tan(theta);
-        double d = Math.cos(theta) * adj;
-        double r = Math.sin(theta) * adj;
-        double coverage = (r * r) / (d * d);
-        if (hyp < opp) {
-            coverage = 1;
-        }
-        coverage = Math.min(coverage, 1);
-        // get material properties from light
-        Material material = Material.MaterialAt(light, point);
-        // combine factors
-        double m = material.Emittance * diffuse * coverage;
-        return material.Color.MulScalar(m);
+            // construct ray toward light point
+            Ray ray = new Ray(n.Origin, point.Sub(n.Origin).Normalize());
+            // get cosine term
+            var diffuse = ray.Direction.Dot(n.Direction);
+            if (diffuse <= 0)
+            {
+                return Colour.Black;
+            }
+            // check for light visibility
+            Hit hit = scene.Intersect(ray);
+            if (!hit.Ok() || hit.Shape != light)
+            {
+                return Colour.Black;
+            }
+            // compute solid angle (hemisphere coverage)
+            var hyp = center.Sub(n.Origin).Length();
+            var opp = radius;
+            var theta = Math.asin(opp / hyp);
+            var adj = opp / Math.tan(theta);
+            var d = Math.cos(theta) * adj;
+            var r = Math.sin(theta) * adj;
+            var coverage = (r * r) / (d * d);
+            if (hyp < opp)
+            {
+                coverage = 1;
+            }
+            coverage = Math.min(coverage, 1);
+            // get material properties from light
+            Material material = Material.MaterialAt(light, point);
+            // combine factors
+            var m = material.Emittance * diffuse * coverage;
+            return material.Color.MulScalar(m);
     }
 }
