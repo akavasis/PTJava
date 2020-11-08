@@ -2,7 +2,7 @@
 package gopt2j;
 
 /**
- * @author alex.collins
+ * @author alex.collins - https://github.com/alexec/tuples
  * @param <T0>
  */
 public final class Tuple1<T0> implements Tuple<Tuple1<T0>> {

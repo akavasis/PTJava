@@ -28,7 +28,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * @author alex.collins
+ * @author alex.collins - https://github.com/alexec/tuples
  */
 public final class Tuple0 implements Tuple<Tuple0> {
 

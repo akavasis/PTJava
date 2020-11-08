@@ -1,7 +1,7 @@
 package gopt2j;
 
 /**
- * @author alex.collins
+ * @author alex.collins - https://github.com/alexec/tuples
  * @param <T0>
  * @param <T1>
  * @param <T2>

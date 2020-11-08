@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.function.IntFunction;
 
 /**
- * @author alex.collins
+ * @author alex.collins - https://github.com/alexec/tuples
  * @param <T>
  */
 public interface Tuple<T extends Tuple> extends IntFunction, Serializable, Cloneable, Comparable<T> {
