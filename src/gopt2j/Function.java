@@ -34,7 +34,7 @@ class Function implements Func {
     }
 
     boolean Contains(Vector v) {
-        return v.Z < Function.func(v.X, v.Y);
+        return v.z < Function.func(v.x, v.y);
     }
 
     @Override
@@ -52,12 +52,12 @@ class Function implements Func {
 
     @Override
     public Vector UV(Vector p) {
-        double x1 = Box.Min.X;
-        double x2 = Box.Max.X;
-        double y1 = Box.Min.Y;
-        double y2 = Box.Max.Y;
-        double u = p.X - x1 / x2 - x1;
-        double v = p.Y - y1 / y2 - y1;
+        double x1 = Box.Min.x;
+        double x2 = Box.Max.x;
+        double y1 = Box.Min.y;
+        double y2 = Box.Max.y;
+        double u = p.x - x1 / x2 - x1;
+        double v = p.y - y1 / y2 - y1;
         return new Vector(u, v, 0);
     }
 
@@ -69,8 +69,8 @@ class Function implements Func {
     @Override
     public Vector NormalAt(Vector p) {
         double eps = 1e-3;
-        double x = Function.func(p.X - eps, p.Y) - Function.func(p.X + eps, p.Y);
-        double y = Function.func(p.X, p.Y - eps) - Function.func(p.X, p.Y + eps);
+        double x = Function.func(p.x - eps, p.y) - Function.func(p.x + eps, p.y);
+        double y = Function.func(p.x, p.y - eps) - Function.func(p.x, p.y + eps);
         double z = 2 * eps;
         Vector v = new Vector(x, y, z);
         return v.Normalize();

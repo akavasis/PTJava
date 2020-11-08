@@ -8,21 +8,21 @@ class MC {
     public Mesh NewSDFMesh(SDF sdf, Box box, double step) {
         Vector min = box.Min;
         Vector size = box.Size();
-        int nx = (int) (Math.ceil(size.X / step));
-        int ny = (int) (Math.ceil(size.Y / step));
-        int nz = (int) (Math.ceil(size.Z / step));
-        double sx = size.X / (double) nx;
-        double sy = size.Y / (double) ny;
-        double sz = size.Z / (double) nz;
+        int nx = (int) (Math.ceil(size.x / step));
+        int ny = (int) (Math.ceil(size.y / step));
+        int nz = (int) (Math.ceil(size.z / step));
+        double sx = size.x / (double) nx;
+        double sy = size.y / (double) ny;
+        double sz = size.z / (double) nz;
         Triangle[] triangles;
         Triangle[] merged = null;
 
         for (int x = 0; x < nx - 1; x++) {
             for (int y = 0; y < ny - 1; y++) {
                 for (int z = 0; z < nz - 1; z++) {
-                    double x0 = (double) x * sx + min.X;
-                    double y0 = (double) y * sy + min.Y;
-                    double z0 = (double) z * sz + min.Z;
+                    double x0 = (double) x * sx + min.x;
+                    double y0 = (double) y * sy + min.y;
+                    double z0 = (double) z * sz + min.z;
                     double x1 = x0 + sx;
                     double y1 = y0 + sy;
                     double z1 = z0 + sz;
@@ -90,7 +90,7 @@ class MC {
             return p1;
         }
         double t = (x - v1) / (v2 - v1);
-        return new Vector(p1.X + t * (p2.X - p1.X), p1.Y + t * (p2.Y - p1.Y), p1.Z + t * (p2.Z - p1.Z));
+        return new Vector(p1.x + t * (p2.x - p1.x), p1.y + t * (p2.y - p1.y), p1.z + t * (p2.z - p1.z));
     }
 
     public int[][] pairTable

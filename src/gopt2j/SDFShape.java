@@ -37,9 +37,9 @@ class SDFShape extends TransformedShape implements SDF, IShape {
         double start = 0.0001;
         double jumpSize = 0.001;
         Box box = this.BoundingBox();
-        Double[] t_ = box.Intersect(ray);
-        double t1 = t_[0];
-        double t2 = t_[1];
+        Double ts[] = box.Intersect(ray);
+        Double t1 = ts[0];
+        Double t2 = ts[1];
 
         if (t2 < t1 || t2 < 0) {
             return Hit.NoHit;
@@ -63,9 +63,9 @@ class SDFShape extends TransformedShape implements SDF, IShape {
     @Override
     public Vector NormalAt(Vector p) {
         double e = 0.0001;
-        double x = p.X;
-        double y = p.Y;
-        double z = p.Z;
+        double x = p.x;
+        double y = p.y;
+        double z = p.z;
         return new Vector(this.Evaluate(new Vector(x - e, y, z)) - this.Evaluate(new Vector(x + e, y, z)),
                 this.Evaluate(new Vector(x, y - e, z)) - this.Evaluate(new Vector(x, y + e, z)),
                 this.Evaluate(new Vector(x, y, z - e)) - this.Evaluate(new Vector(x, y, z + e)));
@@ -117,17 +117,17 @@ class SDFShape extends TransformedShape implements SDF, IShape {
         @Override
         public Box BoundingBox() {
             double x, y, z;
-            x = Size.X / 2;
-            y = Size.Y / 2;
-            z = Size.Z / 2;
+            x = Size.x / 2;
+            y = Size.y / 2;
+            z = Size.z / 2;
             return new Box(new Vector(-y, -y, -z), new Vector(x, y, z));
         }
 
         @Override
         public double Evaluate(Vector p) {
-            double x = p.X;
-            double y = p.Y;
-            double z = p.Z;
+            double x = p.x;
+            double y = p.y;
+            double z = p.z;
 
             if (x < 0) {
                 x = -x;
@@ -141,9 +141,9 @@ class SDFShape extends TransformedShape implements SDF, IShape {
                 z = -z;
             }
 
-            x -= this.Size.X / 2;
-            y -= this.Size.Y / 2;
-            z -= this.Size.Z / 2;
+            x -= this.Size.x / 2;
+            y -= this.Size.y / 2;
+            z -= this.Size.z / 2;
             double a = x;
 
             if (y > a) {
@@ -199,8 +199,8 @@ class SDFShape extends TransformedShape implements SDF, IShape {
 
         @Override
         public double Evaluate(Vector p) {
-            double x = Math.sqrt(p.X * p.X + p.Z * p.Z);
-            double y = p.Y;
+            double x = Math.sqrt(p.x * p.x + p.z * p.z);
+            double y = p.y;
             if (x < 0) {
                 x = -x;
             }
@@ -287,7 +287,7 @@ class SDFShape extends TransformedShape implements SDF, IShape {
 
         @Override
         public double Evaluate(Vector p) {
-            Vector q = new Vector(new Vector(p.X, p.Y, 0).LengthN(this.MajorExponent) - this.MajorRadius, p.Z, 0);
+            Vector q = new Vector(new Vector(p.x, p.y, 0).LengthN(this.MajorExponent) - this.MajorRadius, p.z, 0);
             return q.LengthN(this.MinorExponent) - this.MinRadius;
         }
 

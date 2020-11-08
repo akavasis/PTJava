@@ -118,7 +118,7 @@ class Volume extends TransformedShape implements IShape {
     }
 
     int Sign(Vector a) {
-        double s = this.Sample(a.X, a.Y, a.Z);
+        double s = this.Sample(a.x, a.y, a.z);
         for (VolumeWindow win : this.Windows) {
             if (s < win.Lo) {
                 return win.hashCode() + 1;
@@ -139,9 +139,9 @@ class Volume extends TransformedShape implements IShape {
     @Override
     public Vector NormalAt(Vector p) {
         double eps = 0.001;
-        Vector n = new Vector(this.Sample(p.X - eps, p.Y, p.Z) - this.Sample(p.X + eps, p.Y, p.Z),
-                this.Sample(p.X, p.Y - eps, p.Z) - this.Sample(p.X, p.Y + eps, p.Z),
-                this.Sample(p.X, p.Y, p.Z - eps) - this.Sample(p.X, p.Y, p.Z + eps));
+        Vector n = new Vector(this.Sample(p.x - eps, p.y, p.z) - this.Sample(p.x + eps, p.y, p.z),
+                this.Sample(p.x, p.y - eps, p.z) - this.Sample(p.x, p.y + eps, p.z),
+                this.Sample(p.x, p.y, p.z - eps) - this.Sample(p.x, p.y, p.z + eps));
         return n.Normalize();
     }
 
@@ -149,7 +149,7 @@ class Volume extends TransformedShape implements IShape {
     public Material MaterialAt(Vector p) {
         double be = 1e9;
         Material bm = null;
-        double s = this.Sample(p.X, p.Y, p.Z);
+        double s = this.Sample(p.x, p.y, p.z);
         for (VolumeWindow Window : this.Windows) {
             if (s >= Window.Lo && s <= Window.Hi) {
                 return Window.Material;
@@ -165,9 +165,9 @@ class Volume extends TransformedShape implements IShape {
 
     @Override
     public Hit Intersect(Ray ray) {
-        Double[] tbool = this.Box.Intersect(ray);
-        double tmin = tbool[1];
-        double tmax = tbool[2];
+        Double[] tbool = Box.Intersect(ray);
+        var tmin = tbool[0];
+        var tmax = tbool[1];
         double step = 1.0 / 512;
         double start = Math.max(step, tmin);
         int sign = -1;

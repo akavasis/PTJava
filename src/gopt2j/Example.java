@@ -92,36 +92,39 @@ public class Example {
     }
 
     static void qbert() throws IOException, InterruptedException {
-        Scene scene = new Scene();
-        Material floor = Material.DiffuseMaterial(Colour.White);
-        Material cube = Material.DiffuseMaterial(new Colour(0.3, 0.2, 0.6));
-        Material ball = Material.DiffuseMaterial(new Colour(0.3, 0.7, 0.7));
+        var scene = new Scene();
+        var floor = Material.GlossyMaterial(Colour.HexColor(0xFCFFF5), 1.2, Util.Radians(30));
+        var cube = Material.GlossyMaterial(Colour.HexColor(0xFF8C00), 1.3, Util.Radians(20));
+        var ball = Material.GlossyMaterial(Colour.HexColor(0xD90000), 1.4, Util.Radians(10));
         int n = 7;
-        double fn = (double) n;
-
-        for (int z = 0; z < n; z++) {
-            for (int x = 0; x < n - z; x++) {
-                for (int y = 0; y < n - z - x; y++) {
-                    double fx = (double) x;
-                    double fy = (double) y;
-                    double fz = (double) z;
+        var fn = (double)n;
+        for (int z = 0; z < n; z++)
+        {
+            for (int x = 0; x < n - z; x++)
+            {
+                for (int y = 0; y < n - z - x; y++)
+                {
+                    var fx = (double)x;
+                    var fy = (double)y;
+                    var fz = (double)z;
                     scene.Add(Cube.NewCube(new Vector(fx, fy, fz), new Vector(fx + 1, fy + 1, fz + 1), cube));
 
-                    if (x + y == n - z - 1) {
-                        if (new Random().nextDouble() > 0.75) {
+                    if (x + y == n - z - 1)
+                    {
+                        if (new Random().nextDouble() > 0.75)
+                        {
                             scene.Add(Sphere.NewSphere(new Vector(fx + 0.5, fy + 0.5, fz + 1.5), 0.35, ball));
                         }
                     }
                 }
             }
         }
-
         scene.Add(Cube.NewCube(new Vector(-1000, -1000, -1), new Vector(1000, 1000, 0), floor));
         scene.Add(Sphere.NewSphere(new Vector(fn, fn / 3, fn * 2), 1, Material.LightMaterial(Colour.White, 100)));
-        Camera camera = Camera.LookAt(new Vector(fn * 2, fn * 2, fn * 2), new Vector(0, 0, fn / 4), new Vector(0, 0, 1), 35);
-        DefaultSampler sampler = new DefaultSampler().NewSampler(4, 4);
-        Renderer renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080);
-        renderer.FireflySamples = 128;
+        var camera = Camera.LookAt(new Vector(fn * 2, fn * 2, fn * 2), new Vector(0, 0, fn / 4), new Vector(0, 0, 1), 35);
+        var sampler = new DefaultSampler().NewSampler(4, 4);
+        var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
+        //renderer.FireflySamples = 64;
         renderer.IterativeRender("qbert.png", 100);
     }
 

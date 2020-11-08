@@ -67,11 +67,25 @@ public class Colour {
     public Colour Pow(double b) {
         return new Colour(Math.pow(r, b), Math.pow(g, b), Math.pow(this.b, b));
     }
+    
+    public static <T extends Comparable<T>> T clamp(T val, T min, T max) {
+        if (val.compareTo(min) < 0) return min;
+        else if (val.compareTo(max) > 0) return max;
+        else return val;
+    }   
 
     public int getIntFromColor(double red, double green, double blue) {
-        byte r = (byte) Math.max(0, Math.min(255, red * 255));
-        byte g = (byte) Math.max(0, Math.min(255, green * 255));
-        byte b = (byte) Math.max(0, Math.min(255, blue * 255));
+        
+        if (Double.isNaN(red))
+            red = 0.0;
+        if (Double.isNaN(green))
+            green = 0.0;
+        if (Double.isNaN(blue))
+            blue = 0.0;
+        
+        var r = (int)(256 * clamp(red, 0.0, 0.999)); 
+        var g = (int)(256 * clamp(green, 0.0, 0.999));
+        var b = (int)(256 * clamp(blue, 0.0, 0.999));
         return 255 << 24 | r << 16 | g << 8 | b;
     }
 

@@ -14,38 +14,28 @@ public class Matrix {
            double x10_, double x11_, double x12_, double x13_,
            double x20_, double x21_, double x22_, double x23_,
            double x30_, double x31_, double x32_, double x33_) {
-        x00 = x00_;
-        x01 = x01_;
-        x02 = x02_;
-        x03 = x03_;
-        x10 = x10_;
-        x11 = x11_;
-        x12 = x12_;
-        x13 = x13_;
-        x20 = x20_;
-        x21 = x21_;
-        x22 = x22_;
-        x23 = x23_;
-        x30 = x30_;
-        x31 = x31_;
-        x32 = x32_;
-        x33 = x33_;
+        x00 = x00_; x01 = x01_; x02 = x02_; x03 = x03_;
+        x10 = x10_; x11 = x11_; x12 = x12_; x13 = x13_;
+        x20 = x20_; x21 = x21_; x22 = x22_; x23 = x23_;
+        x30 = x30_; x31 = x31_; x32 = x32_; x33 = x33_;
     }
 
-    static Matrix Identity = new Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0,
-            0, 0, 0, 1);
+    static Matrix Identity = new Matrix(1, 0, 0, 0, 
+                                        0, 1, 0, 0, 
+                                        0, 0, 1, 0,
+                                        0, 0, 0, 1);
 
     Matrix Translate(Vector v) {
-        return new Matrix(1, 0, 0, v.X,
-                          0, 1, 0, v.Y,
-                          0, 0, 1, v.Z,
+        return new Matrix(1, 0, 0, v.x,
+                          0, 1, 0, v.y,
+                          0, 0, 1, v.z,
                           0, 0, 0, 1);
     }
 
     Matrix Scale(Vector v) {
-        return new Matrix(v.X,   0,   0, 0,
-                            0, v.Y,   0, 0,
-                            0,   0, v.Z, 0,
+        return new Matrix(v.x,   0,   0, 0,
+                            0, v.y,   0, 0,
+                            0,   0, v.z, 0,
                             0,   0,   0, 1);
     }
 
@@ -54,10 +44,10 @@ public class Matrix {
         var s = Math.sin(a);
         var c = Math.cos(a);
         var m = 1 - c;
-        return new Matrix(m * v.X * v.X + c, m * v.X * v.Y + v.Z * s, m * v.Z * v.X - v.Y * s, 0,
-                m * v.X * v.Y - v.Z * s, m * v.Y * v.Y + c, m * v.Y * v.Z + v.X * s, 0,
-                m * v.Z * v.X + v.Y * s, m * v.Y * v.Z - v.X * s, m * v.Z * v.Z + c, 0,
-                0, 0, 0, 1);
+        return new Matrix(m * v.x * v.x + c, m * v.x * v.y + v.z * s, m * v.z * v.x - v.y * s, 0,
+                          m * v.x * v.y - v.z * s, m * v.y * v.y + c, m * v.y * v.z + v.x * s, 0,
+                          m * v.z * v.x + v.y * s, m * v.y * v.z - v.x * s, m * v.z * v.z + c, 0,
+                          0, 0, 0, 1);
     }
 
     Matrix Frustum(double l, double r, double b, double t, double n, double f) {
@@ -89,10 +79,10 @@ public class Matrix {
         var f = center.Sub(eye).Normalize();
         var s = f.Cross(up).Normalize();
         var u = s.Cross(f);
-        var m = new Matrix(s.X, u.X, f.X, 0,
-                s.Y, u.Y, f.Y, 0,
-                s.Z, u.Z, f.Z, 0,
-                0, 0, 0, 1);
+        var m = new Matrix(s.x, u.x, f.x, 0,
+                           s.y, u.y, f.y, 0,
+                           s.z, u.z, f.z, 0,
+                           0, 0, 0, 1);
 
         return m.Transpose().Inverse().Translate(m, eye);
     }
@@ -123,16 +113,16 @@ public class Matrix {
     }
 
     Vector MulPosition(Vector b) {
-        double x = x00 * b.X + x01 * b.Y + x02 * b.Z + x03;
-        double y = x10 * b.X + x11 * b.Y + x12 * b.Z + x13;
-        double z = x20 * b.X + x21 * b.Y + x22 * b.Z + x23;
+        double x = x00 * b.x + x01 * b.y + x02 * b.z + x03;
+        double y = x10 * b.x + x11 * b.y + x12 * b.z + x13;
+        double z = x20 * b.x + x21 * b.y + x22 * b.z + x23;
         return new Vector(x, y, z);
     }
 
     Vector MulDirection(Vector b) {
-        double x = x00 * b.X + x01 * b.Y + x02 * b.Z;
-        double y = x10 * b.X + x11 * b.Y + x12 * b.Z;
-        double z = x20 * b.X + x21 * b.Y + x22 * b.Z;
+        double x = x00 * b.x + x01 * b.y + x02 * b.z;
+        double y = x10 * b.x + x11 * b.y + x12 * b.z;
+        double z = x20 * b.x + x21 * b.y + x22 * b.z;
         return new Vector(x, y, z).Normalize();
     }
 
@@ -145,12 +135,12 @@ public class Matrix {
         Vector u = new Vector(x01, x11, x21);
         Vector b = new Vector(x02, x12, x22);
         Vector t = new Vector(x03, x13, x23);
-        Vector xa = r.MulScalar(box.Min.X);
-        Vector xb = r.MulScalar(box.Max.X);
-        Vector ya = u.MulScalar(box.Min.Y);
-        Vector yb = u.MulScalar(box.Max.Y);
-        Vector za = b.MulScalar(box.Min.Z);
-        Vector zb = b.MulScalar(box.Max.Z);
+        Vector xa = r.MulScalar(box.Min.x);
+        Vector xb = r.MulScalar(box.Max.x);
+        Vector ya = u.MulScalar(box.Min.y);
+        Vector yb = u.MulScalar(box.Max.y);
+        Vector za = b.MulScalar(box.Min.z);
+        Vector zb = b.MulScalar(box.Max.z);
 
         //xa, xb = xa.Min(xb), xa.Max(xb)        
         xa = xa.Min(xb);

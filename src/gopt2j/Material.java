@@ -18,7 +18,7 @@ public class Material {
     Material() {
     }
 
-    Material(Colour color, ITexture texture, ITexture normaltexture, ITexture bumptexture, ITexture glosstexture, double b, double e, double i, double g, double tint, double r, Boolean t) {
+    public Material(Colour color, ITexture texture, ITexture normaltexture, ITexture bumptexture, ITexture glosstexture, double b, double e, double i, double g, double tint, double r, Boolean t) {
         Color = color;
         Texture = texture;
         NormalTexture = normaltexture;
@@ -62,18 +62,15 @@ public class Material {
     }
 
     static Material MaterialAt(IShape shape, Vector point) {
-        Material material = shape.MaterialAt(point);
-        Vector uv = shape.UV(point);
-
+        var material = shape.MaterialAt(point);
+        var uv = shape.UV(point);
         if (material.Texture != null) {
-            material.Color = material.Texture.Sample(uv.X, uv.Y);
+            material.Color = material.Texture.Sample(uv.x, uv.y);
         }
-
         if (material.GlossTexture != null) {
-            var c = material.GlossTexture.Sample(uv.X, uv.Y);
+            var c = material.GlossTexture.Sample(uv.x, uv.y);
             material.Gloss = (c.r + c.g + c.b) / 3;
         }
-
         return material;
     }
 }

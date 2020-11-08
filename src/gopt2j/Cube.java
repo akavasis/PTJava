@@ -6,6 +6,8 @@ class Cube extends TransformedShape implements IShape {
     Vector Max;
     Material Material;
     Box Box;
+    
+    static double EPS = 1e-9;
 
     Cube(Vector min, Vector max, Material material, Box box) {
         this.Min = min;
@@ -34,41 +36,37 @@ class Cube extends TransformedShape implements IShape {
         Vector n = Min.Sub(r.Origin).Div(r.Direction);
         Vector f = Max.Sub(r.Origin).Div(r.Direction);
         
-        n = n.Min(f);
-        f = n.Max(f);
-        SwapVector(n,f);        
+        var nf = Tuple.valueOf(n.Min(f), n.Max(f));
+        
+        n = nf._0;
+        f = nf._1;
 
-        var t0 = Math.max(Math.max(n.X, n.Y), n.Z);
-        var t1 = Math.min(Math.min(f.X, f.Y), f.Z);
-
-        if (t0 > 0 && t0 < t1) {
-            return new Hit(this, t0, null);
-        }
-
-        return Hit.NoHit;
+        var t0 = Math.max(Math.max(n.x, n.y), n.z);
+        var t1 = Math.min(Math.min(f.x, f.y), f.z);
+        return t0 > 0 && t0 < t1 ? new Hit(this, t0, null) : Hit.NoHit;
     }
     
     public void SwapVector(Vector a, Vector b)
     {
         Vector swap = new Vector();
-        swap.X = a.X;
-        swap.Y = a.Y;
-        swap.Z = a.Z;
+        swap.x = a.x;
+        swap.y = a.y;
+        swap.z = a.z;
         
-        a.X = b.X;
-        a.Y = b.Y;
-        a.Z = b.Z;
+        a.x = b.x;
+        a.y = b.y;
+        a.z = b.z;
         
-        b.X = swap.X;
-        b.Y = swap.Y;
-        b.Z = swap.Z;
+        b.x = swap.x;
+        b.y = swap.y;
+        b.z = swap.z;
         
     }
 
     @Override
     public Vector UV(Vector p) {
         p = p.Sub(Min).Div(Max.Sub(Min));
-        return new Vector(p.X, p.Z, 0);
+        return new Vector(p.x, p.z, 0);
     }
 
     @Override
@@ -78,28 +76,39 @@ class Cube extends TransformedShape implements IShape {
 
     @Override
     public Vector NormalAt(Vector p) {
-        if (p.X < this.Min.X + 1e-9) //p.X < c.Min.X+EPS:
+        
+       
+        if (p.x < Min.x + EPS) //p.X < c.Min.X+EPS:
         {
-            return new Vector(-1, 0, 0);  //Vector{-1, 0, 0}
-        } else if (p.X > this.Max.X - 1e-9) //p.X > c.Max.X-EPS:
+            return new Vector(-1, 0, 0); //Vector{-1, 0, 0}
+        } 
+        
+        else if (p.x > Max.x - EPS) //p.X > c.Max.X-EPS:
         {
             return new Vector(1, 0, 0);   //return Vector{1, 0, 0}
-        } else if (p.Y < this.Min.Y + 1e-9) //p.Y < c.Min.Y+EPS:
+        } 
+        
+        else if (p.y < this.Min.y + EPS) //p.Y < c.Min.Y+EPS:
         {
             return new Vector(0, -1, 0);  //return Vector{0, -1, 0}
-        } else if (p.Y > this.Max.Y - 1e-9) //p.Y > c.Max.Y-EPS:
+        } 
+        
+        else if (p.y > this.Max.y - EPS) //p.Y > c.Max.Y-EPS:
         {
             return new Vector(0, 1, 0);   //return Vector{0, 1, 0}
-        } else if (p.Z < this.Min.Z + 1e-9) //p.Z < c.Min.Z+EPS:
+        } 
+        
+        else if (p.z < this.Min.z + EPS) //p.Z < c.Min.Z+EPS:
         {
             return new Vector(0, 0, -1);  //return Vector{0, 0, -1}
-        } else if (p.Z > this.Max.Z - 1e-9) //p.Z > c.Max.Z-EPS:
+        } 
+        
+        else if (p.z > this.Max.z - EPS) //p.Z > c.Max.Z-EPS:
         {
             return new Vector(0, 0, 1);   //return Vector{0, 0, 1}     
-        } else {
-            return new Vector(0, 1, 0);     //return Vector{0, 1, 0}
-        }
-
+        } 
+        
+        return new Vector(0, 1, 0);     //return Vector{0, 1, 0}
     }
 
     Mesh Mesh() {
@@ -107,14 +116,14 @@ class Cube extends TransformedShape implements IShape {
         Vector b = Max;
         Vector z = new Vector();
         Material m = Material;
-        var v000 = new Vector(a.X, a.Y, a.Z);
-        var v001 = new Vector(a.X, a.Y, b.Z);
-        var v010 = new Vector(a.X, b.Y, a.Z);
-        var v011 = new Vector(a.X, b.Y, b.Z);
-        var v100 = new Vector(b.X, a.Y, a.Z);
-        var v101 = new Vector(b.X, a.Y, b.Z);
-        var v110 = new Vector(b.X, b.Y, a.Z);
-        var v111 = new Vector(b.X, b.Y, b.Z);
+        var v000 = new Vector(a.x, a.y, a.z);
+        var v001 = new Vector(a.x, a.y, b.z);
+        var v010 = new Vector(a.x, b.y, a.z);
+        var v011 = new Vector(a.x, b.y, b.z);
+        var v100 = new Vector(b.x, a.y, a.z);
+        var v101 = new Vector(b.x, a.y, b.z);
+        var v110 = new Vector(b.x, b.y, a.z);
+        var v111 = new Vector(b.x, b.y, b.z);
 
         Triangle[] triangles = {
             Triangle.NewTriangle(v000, v100, v110, z, z, z, m),

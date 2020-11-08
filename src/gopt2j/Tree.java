@@ -32,13 +32,13 @@ class Tree {
         
         Double[] tm = this.Box.Intersect(r);
 
-        double tmin = tm[0];
-        double tmax = tm[1];
+        var tmin = tm[0];
+        var tmax = tm[1];
 
         if (tmax < tmin || tmax <= 0) {
             return Hit.NoHit;
         }
-        return this.Root.Intersect(r, tmin, tmax);
+        return Root.Intersect(r, tmin, tmax);
     }
 
     public class Node {
@@ -71,16 +71,16 @@ class Tree {
                 case AxisNone:
                     return IntersectShapes(r);
                 case AxisX:
-                    tsplit = (Point - r.Origin.X) / r.Direction.X;
-                    leftFirst = (r.Origin.X < Point) || (r.Origin.X == Point && r.Direction.X <= 0);
+                    tsplit = (Point - r.Origin.x) / r.Direction.x;
+                    leftFirst = (r.Origin.x < Point) || (r.Origin.x == Point && r.Direction.x <= 0);
                     break;
                 case AxisY:
-                    tsplit = (Point - r.Origin.Y) / r.Direction.Y;
-                    leftFirst = (r.Origin.Y < Point) || (r.Origin.Y == Point && r.Direction.Y <= 0);
+                    tsplit = (Point - r.Origin.y) / r.Direction.y;
+                    leftFirst = (r.Origin.y < Point) || (r.Origin.y == Point && r.Direction.y <= 0);
                     break;
                 case AxisZ:
-                    tsplit = (Point - r.Origin.Z) / r.Direction.Z;
-                    leftFirst = (r.Origin.Z < Point) || (r.Origin.Z == Point && r.Direction.Z <= 0);
+                    tsplit = (Point - r.Origin.z) / r.Direction.z;
+                    leftFirst = (r.Origin.z < Point) || (r.Origin.z == Point && r.Direction.z <= 0);
                     break;
                 default:
                     break;
@@ -216,12 +216,12 @@ class Tree {
                 if(shape!= null)
                 {
                     Box box = shape.BoundingBox();
-                    xs.add(box.Min.X);
-                    xs.add(box.Max.X);
-                    ys.add(box.Min.Y);
-                    ys.add(box.Max.Y);
-                    zs.add(box.Min.Z);
-                    zs.add(box.Max.Z);
+                    xs.add(box.Min.x);
+                    xs.add(box.Max.x);
+                    ys.add(box.Min.y);
+                    ys.add(box.Max.y);
+                    zs.add(box.Min.z);
+                    zs.add(box.Max.z);
                 }
                 
             }

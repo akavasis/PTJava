@@ -5,15 +5,15 @@ import java.util.Random;
 public class Vector {
 
     public static Vector ORIGIN = new Vector(0, 0, 0);
-    public double X, Y, Z;
+    public double x, y, z;
 
     public Vector() {
     }
 
     public Vector(double x, double y, double z) {
-        X = x;
-        Y = y;
-        Z = z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     public static Vector RandomUnitVector(Random rnd) {
@@ -36,7 +36,7 @@ public class Vector {
     }
 
     public double Length() {
-        return Math.sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z);
+        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     }
 
     public double LengthN(double n) {
@@ -44,83 +44,83 @@ public class Vector {
             return this.Length();
         }
         Vector a = this.Abs();
-        return Math.pow(Math.pow(a.X, n) + Math.pow(a.Y, n) + Math.pow(a.Z, n), 1 / n);
+        return Math.pow(Math.pow(a.x, n) + Math.pow(a.y, n) + Math.pow(a.z, n), 1 / n);
     }
 
     public double Dot(Vector b) {
-        return this.X * b.X + this.Y * b.Y + this.Z * b.Z;
+        return this.x * b.x + this.y * b.y + this.z * b.z;
     }
 
     public Vector Cross(Vector b) {
-        return new Vector(this.Y * b.Z - this.Z * b.Y,
-                this.Z * b.X - this.X * b.Z,
-                this.X * b.Y - this.Y * b.X);
+        return new Vector(this.y * b.z - this.z * b.y,
+                this.z * b.x - this.x * b.z,
+                this.x * b.y - this.y * b.x);
     }
 
     public Vector Normalize() {
         double d = this.Length();
-        return new Vector(this.X / d, this.Y / d, this.Z / d);
+        return new Vector(this.x / d, this.y / d, this.z / d);
     }
 
     public Vector Negate() {
-        return new Vector(-this.X, -this.Y, -this.Z);
+        return new Vector(-this.x, -this.y, -this.z);
     }
 
     Vector Abs() {
-        return new Vector(Math.abs(this.X), Math.abs(this.Y), Math.abs(this.Z));
+        return new Vector(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
     }
 
     public Vector Add(Vector b) {
-        return new Vector(this.X + b.X, this.Y + b.Y, this.Z + b.Z);
+        return new Vector(this.x + b.x, this.y + b.y, this.z + b.z);
     }
 
     public Vector Sub(Vector b) {
-        return new Vector(this.X - b.X, this.Y - b.Y, this.Z - b.Z);
+        return new Vector(this.x - b.x, this.y - b.y, this.z - b.z);
     }
 
     public Vector Mul(Vector b) {
-        return new Vector(this.X * b.X, this.Y * b.Y, this.Z * b.Z);
+        return new Vector(this.x * b.x, this.y * b.y, this.z * b.z);
     }
 
     public Vector Div(Vector b) {
-        return new Vector(this.X / b.X, this.Y / b.Y, this.Z / b.Z);
+        return new Vector(this.x / b.x, this.y / b.y, this.z / b.z);
     }
 
     public Vector Mod(Vector b) {
-        return new Vector(this.X - b.X * Math.floor(this.X / b.X),
-                this.Y - b.Y * Math.floor(this.Y / b.Y),
-                this.Z - b.Z * Math.floor(this.Z / b.Z));
+        return new Vector(this.x - b.x * Math.floor(this.x / b.x),
+                this.y - b.y * Math.floor(this.y / b.y),
+                this.z - b.z * Math.floor(this.z / b.z));
     }
 
     public Vector AddScalar(double b) {
-        return new Vector(this.X + b, this.Y + b, this.Z + b);
+        return new Vector(this.x + b, this.y + b, this.z + b);
     }
 
     public Vector SubScalar(double b) {
-        return new Vector(this.X - b, this.Y - b, this.Z - b);
+        return new Vector(this.x - b, this.y - b, this.z - b);
     }
 
     public Vector MulScalar(double b) {
-        return new Vector(this.X * b, this.Y * b, this.Z * b);
+        return new Vector(this.x * b, this.y * b, this.z * b);
     }
 
     public Vector DivScalar(double b) {
-        return new Vector(this.X / b, this.Y / b, this.Z / b);
+        return new Vector(this.x / b, this.y / b, this.z / b);
     }
 
     public Vector Min(Vector b) {
-        return new Vector(Math.min(this.X, b.X), Math.min(this.Y, b.Y), Math.min(this.Z, b.Z));
+        return new Vector(Math.min(this.x, b.x), Math.min(this.y, b.y), Math.min(this.z, b.z));
     }
 
     public Vector Max(Vector b) {
-        return new Vector(Math.max(this.X, b.X), Math.max(this.Y, b.Y), Math.max(this.Z, b.Z));
+        return new Vector(Math.max(this.x, b.x), Math.max(this.y, b.y), Math.max(this.z, b.z));
     }
 
     public Vector MinAxis() {
         double x, y, z;
-        x = Math.abs(this.X);
-        y = Math.abs(this.Y);
-        z = Math.abs(this.Z);
+        x = Math.abs(this.x);
+        y = Math.abs(this.y);
+        z = Math.abs(this.z);
         if (x <= y && x <= z) {
             return new Vector(1, 0, 0);
         } else if (y <= x && y <= z) {
@@ -130,11 +130,11 @@ public class Vector {
     }
 
     public double MinComponent() {
-        return Math.min(Math.min(this.X, this.Y), this.Z);
+        return Math.min(Math.min(this.x, this.y), this.z);
     }
 
     public double MaxComponent() {
-        return Math.max(Math.max(this.X, this.Y), this.Z);
+        return Math.max(Math.max(this.x, this.y), this.z);
     }
 
     public Vector Reflect(Vector i) {

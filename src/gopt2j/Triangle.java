@@ -65,7 +65,7 @@ class Triangle extends TransformedShape implements IShape {
         n = n.Add(T2.MulScalar(centric[1]));
         n = n.Add(T3.MulScalar(centric[2]));
 
-        return new Vector(n.X, n.Y, 0);
+        return new Vector(n.x, n.y, 0);
     }
 
     double[] Barycentric(Vector p) {
@@ -102,15 +102,15 @@ class Triangle extends TransformedShape implements IShape {
 
     @Override
     public Hit Intersect(Ray r) {
-        var e1x = V2.X - V1.X;
-        var e1y = V2.Y - V1.Y;
-        var e1z = V2.Z - V1.Z;
-        var e2x = V3.X - V1.X;
-        var e2y = V3.Y - V1.Y;
-        var e2z = V3.Z - V1.Z;
-        var px = r.Direction.Y * e2z - r.Direction.Z * e2y;
-        var py = r.Direction.Z * e2x - r.Direction.X * e2z;
-        var pz = r.Direction.X * e2y - r.Direction.Y * e2x;
+        var e1x = V2.x - V1.x;
+        var e1y = V2.y - V1.y;
+        var e1z = V2.z - V1.z;
+        var e2x = V3.x - V1.x;
+        var e2y = V3.y - V1.y;
+        var e2z = V3.z - V1.z;
+        var px = r.Direction.y * e2z - r.Direction.z * e2y;
+        var py = r.Direction.z * e2x - r.Direction.x * e2z;
+        var pz = r.Direction.x * e2y - r.Direction.y * e2x;
         var det = e1x * px + e1y * py + e1z * pz;
 
         if (det > -Util.EPS && det < Util.EPS) {
@@ -118,9 +118,9 @@ class Triangle extends TransformedShape implements IShape {
         }
 
         var inv = 1 / det;
-        var tx = r.Origin.X - V1.X;
-        var ty = r.Origin.Y - V1.Y;
-        var tz = r.Origin.Z - V1.Z;
+        var tx = r.Origin.x - V1.x;
+        var ty = r.Origin.y - V1.y;
+        var tz = r.Origin.z - V1.z;
         var u = (tx * px + ty * py + tz * pz) * inv;
 
         if (u < 0 || u > 1) {
@@ -130,7 +130,7 @@ class Triangle extends TransformedShape implements IShape {
         var qx = ty * e1z - tz * e1y;
         var qy = tz * e1x - tx * e1z;
         var qz = tx * e1y - ty * e1x;
-        var v = (r.Direction.X * qx + r.Direction.Y * qy + r.Direction.Z * qz) * inv;
+        var v = (r.Direction.x * qx + r.Direction.y * qy + r.Direction.z * qz) * inv;
 
         if ((v < 0) || ((u + v) > 1)) {
             return Hit.NoHit;
@@ -163,18 +163,18 @@ class Triangle extends TransformedShape implements IShape {
             b = b.Add(T1.MulScalar(u));
             b = b.Add(T2.MulScalar(v));
             b = b.Add(T3.MulScalar(w));
-            Vector ns = this.Material.NormalTexture.NormalSample(b.X, b.Y);
+            Vector ns = this.Material.NormalTexture.NormalSample(b.x, b.y);
             Vector dv1 = V2.Sub(V1);
             Vector dv2 = V3.Sub(V1);
             Vector dt1 = T2.Sub(T1);
             Vector dt2 = T3.Sub(T1);
-            Vector T = dv1.MulScalar(dt2.Y).Sub(dv2.MulScalar(dt1.Y)).Normalize();
-            Vector B = dv2.MulScalar(dt1.X).Sub(dv1.MulScalar(dt2.X)).Normalize();
+            Vector T = dv1.MulScalar(dt2.y).Sub(dv2.MulScalar(dt1.y)).Normalize();
+            Vector B = dv2.MulScalar(dt1.x).Sub(dv1.MulScalar(dt2.x)).Normalize();
             Vector N = T.Cross(B);
 
-            Matrix matrix = new Matrix(T.X, B.X, N.X, 0,
-                    T.Y, B.Y, N.Y, 0,
-                    T.Z, B.Z, N.Z, 0,
+            Matrix matrix = new Matrix(T.x, B.x, N.x, 0,
+                    T.y, B.y, N.y, 0,
+                    T.z, B.z, N.z, 0,
                     0, 0, 0, 1);
             matrix.MulDirection(ns);
         }
@@ -184,15 +184,15 @@ class Triangle extends TransformedShape implements IShape {
             b = b.Add(T1.MulScalar(u));
             b = b.Add(T2.MulScalar(v));
             b = b.Add(T3.MulScalar(w));
-            Vector bump = Material.BumpTexture.BumpSample(b.X, b.Y);
+            Vector bump = Material.BumpTexture.BumpSample(b.x, b.y);
             Vector dv1 = V2.Sub(V1);
             Vector dv2 = V3.Sub(V1);
             Vector dt1 = T2.Sub(T1);
             Vector dt2 = T3.Sub(T1);
-            Vector tangent = dv1.MulScalar(dt2.Y).Sub(dv2.MulScalar(dt1.Y)).Normalize();
-            Vector bitangent = dv2.MulScalar(dt1.X).Sub(dv1.MulScalar(dt2.X)).Normalize();
-            n = n.Add(tangent.MulScalar(bump.X * Material.BumpMultiplier));
-            n = n.Add(bitangent.MulScalar(bump.Y * Material.BumpMultiplier));
+            Vector tangent = dv1.MulScalar(dt2.y).Sub(dv2.MulScalar(dt1.y)).Normalize();
+            Vector bitangent = dv2.MulScalar(dt1.x).Sub(dv1.MulScalar(dt2.x)).Normalize();
+            n = n.Add(tangent.MulScalar(bump.x * Material.BumpMultiplier));
+            n = n.Add(bitangent.MulScalar(bump.y * Material.BumpMultiplier));
         }
         n = n.Normalize();
         return n;

@@ -63,36 +63,40 @@ class Box {
     }
 
     public boolean Contains(Vector b) {
-        return Min.X <= b.X && Max.X >= b.X && Min.Y <= b.Y && Max.Y >= b.Y && Min.Z <= b.Z && Max.Z >= b.Z;
+        return Min.x <= b.x && Max.x >= b.x && Min.y <= b.y && Max.y >= b.y && Min.z <= b.z && Max.z >= b.z;
     }
 
     public boolean Intersects(Box b) {
-        return !(Min.X > b.Max.X || Max.X < b.Min.X || Min.Y > b.Max.Y || Max.Y < b.Min.Y || Min.Z > b.Max.Z || Max.Z < b.Min.Z);
+        return !(Min.x > b.Max.x || Max.x < b.Min.x || Min.y > b.Max.y || Max.y < b.Min.y || Min.z > b.Max.z || Max.z < b.Min.z);
     }
 
     public Double[] Intersect(Ray r) {
-        var x1 = (Min.X - r.Origin.X) / r.Direction.X;
-        var y1 = (Min.Y - r.Origin.Y) / r.Direction.Y;
-        var z1 = (Min.Z - r.Origin.Z) / r.Direction.Z;
-        var x2 = (Max.X - r.Origin.X) / r.Direction.X;
-        var y2 = (Max.Y - r.Origin.Y) / r.Direction.Y;
-        var z2 = (Max.Z - r.Origin.Z) / r.Direction.Z;
-
-        if (x1 > x2) {
-            x1 = x1 - x2;
-            x2 = x1 + x2;
-            x1 = x2 - x1;
+        var x1 = (Min.x - r.Origin.x) / r.Direction.x;
+        var y1 = (Min.y - r.Origin.y) / r.Direction.y;
+        var z1 = (Min.z - r.Origin.z) / r.Direction.z;
+        var x2 = (Max.x - r.Origin.x) / r.Direction.x;
+        var y2 = (Max.y - r.Origin.y) / r.Direction.y;
+        var z2 = (Max.z - r.Origin.z) / r.Direction.z;
+        
+        if(x1 > x2)
+        {
+            Tuple2<Double,Double> x1_x2 = Tuple.valueOf(x2, x1);//new Tuple2<>(x2,x1);
+            x1 = x1_x2._0;
+            x2 = x1_x2._1;
         }
-        if (y1 > y2) {
-            y1 = y1 - y2;
-            y2 = y1 + y2;
-            y1 = y2 - y1;
+        if(y1 > y2)
+        {
+            Tuple2<Double,Double> y1_y2 = Tuple.valueOf(y2, y1);//new Tuple2<>(y2,y1);
+            y1 = y1_y2._0;
+            y2 = y1_y2._1;
         }
-        if (z1 > z2) {
-            z1 = z1 - z2;
-            z2 = z1 + z2;
-            z1 = z2 - z1;
+        if(z1 > z2)
+        {
+            Tuple2<Double,Double> z1_z2 = Tuple.valueOf(z2, z1);//new Tuple2<>(z1,z2);
+            z1 = z1_z2._0;
+            z2 = z1_z2._1;
         }
+        
         double t1 = Math.max(Math.max(x1, y1), z1);
         double t2 = Math.min(Math.min(x2, y2), z2);
         Double intersect[] = {t1, t2};
@@ -102,16 +106,16 @@ class Box {
     public boolean[] Partition(Axis axis, double point) {
         switch (axis) {
             case AxisX:
-                left = Min.X <= point;
-                right = Max.X >= point;
+                left = Min.x <= point;
+                right = Max.x >= point;
                 break;
             case AxisY:
-                left = Min.Y <= point;
-                right = Max.Y >= point;
+                left = Min.y <= point;
+                right = Max.y >= point;
                 break;
             case AxisZ:
-                left = Min.Z <= point;
-                right = Max.Z >= point;
+                left = Min.z <= point;
+                right = Max.z >= point;
                 break;
         }
         boolean partition[] = {left, right};

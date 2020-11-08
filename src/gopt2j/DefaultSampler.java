@@ -63,9 +63,9 @@ class DefaultSampler implements Sampler {
             return sampleEnvironment(scene, ray);
         }
 
-        HitInfo info = hit.Info(ray);
-        Material material = info.material;
-        Colour result = Colour.Black;
+        var info = hit.Info(ray);
+        var material = info.material;
+        var result = Colour.Black;
 
         if (material.Emittance > 0) {
             if (DirectLighting && !emission) {
@@ -77,7 +77,7 @@ class DefaultSampler implements Sampler {
         int n = (int) Math.sqrt(samples);
         BounceType ma, mb;
 
-        if ((SpecularMode == SpecularMode.SpecularModeAll) || (depth == 0 && SpecularMode == SpecularMode.SpecularModeFirst)) {
+        if (SpecularMode == SpecularMode.SpecularModeAll || depth == 0 && SpecularMode == SpecularMode.SpecularModeFirst) {
             ma = BounceType.BounceTypeDiffuse;
             mb = BounceType.BounceTypeSpecular;
         } else {
@@ -88,31 +88,37 @@ class DefaultSampler implements Sampler {
         for (int u = 0; u < n; u++) {
             for (int v = 0; v < n; v++) {
                 for (int i = ma.ordinal(); i <= mb.ordinal(); i++) {
-                    double fu = ((double) u + rand.nextDouble()) / (double) n;
-                    double fv = ((double) v + rand.nextDouble()) / (double) n;
+                    var fu = ( u + rand.nextDouble()) / n;
+                    var fv = ( v + rand.nextDouble()) / n;
                     
-                    Ray newRay = ray.Bounce(info, fu, fv, BounceType.values()[i], rand);
+                    Boolean reflected;
+                    Double p;
+                    var newRay = ray.Bounce(info, fu, fv, BounceType.values()[i], rand);
+                    reflected = (Boolean)newRay._1;
+                    p = (Double)newRay._2;
+                    
+                    
 
                     if (BounceType.values()[i] == BounceType.BounceTypeAny) {
-                        newRay.bouncep = 1;
+                        p = 1.0;
                     }
 
-                    if (newRay.bouncep > 0 && newRay.reflected) {
+                    if ((Double)newRay._2 > 0 && (Boolean)newRay._1) {
                         // specular
-                        Colour indirect = sample(scene, newRay, newRay.reflected, 1, depth + 1, rand);
+                        var indirect = sample(scene, (Ray)newRay._0, (Boolean)newRay._1, 1, depth + 1, rand);
                         Colour tinted = indirect.Mix(material.Color.Mul(indirect), material.Tint);
-                        result = result.Add(tinted.MulScalar(newRay.bouncep));
+                        result = result.Add(tinted.MulScalar((Double)newRay._2));
                     }
 
-                    if (newRay.bouncep > 0 && !newRay.reflected) {
+                    if ((Double)newRay._2 > 0 && !(Boolean)newRay._1) {
                         // diffuse
-                        Colour indirect = sample(scene, newRay, newRay.reflected, 1, depth + 1, rand);
+                        Colour indirect = sample(scene, (Ray)newRay._0, (Boolean)newRay._1, 1, depth + 1, rand);
                         Colour direct = Colour.Black;
 
                         if (DirectLighting) {
                             direct = sampleLights(scene, info.Ray, rand);
                         }
-                        result = result.Add(material.Color.Mul(direct.Add(indirect)).MulScalar(newRay.bouncep));
+                        result = result.Add(material.Color.Mul(direct.Add(indirect)).MulScalar((Double)newRay._2));
                     }
                     i = mb.ordinal();
                 }
@@ -124,8 +130,8 @@ class DefaultSampler implements Sampler {
     Colour sampleEnvironment(Scene scene, Ray ray) {
         if (scene.Texture != null) {
             Vector d = ray.Direction;
-            double u = Math.atan2(d.Z, d.X) + scene.TextureAngle;
-            double v = Math.atan2(d.Y, new Vector(d.X, 0, d.Z).Length());
+            double u = Math.atan2(d.z, d.x) + scene.TextureAngle;
+            double v = Math.atan2(d.y, new Vector(d.x, 0, d.z).Length());
             u = (u + Math.PI) / (2 * Math.PI);
             v = (v + Math.PI / 2) / Math.PI;
             return scene.Texture.Sample(u, v);

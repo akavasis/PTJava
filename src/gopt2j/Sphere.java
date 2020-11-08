@@ -15,8 +15,8 @@ class Sphere extends TransformedShape implements IShape {
     }
 
     static Sphere NewSphere(Vector center, double radius, Material material) {
-        Vector min = new Vector(center.X - radius, center.Y - radius, center.Z - radius);
-        Vector max = new Vector(center.X + radius, center.Y + radius, center.Z + radius);
+        Vector min = new Vector(center.x - radius, center.y - radius, center.z - radius);
+        Vector max = new Vector(center.x + radius, center.y + radius, center.z + radius);
         Box box = new Box(min, max);
         return new Sphere(center, radius, material, box);
     }
@@ -51,11 +51,11 @@ class Sphere extends TransformedShape implements IShape {
     @Override
     public Vector UV(Vector p) {
         p = p.Sub(Center);
-        var u = Math.atan2(p.Z, p.X);
-        var v = Math.atan2(p.Y, new Vector(p.X, 0, p.Z).Length());
-        u = 1 - (u + Math.PI) / (2 * Math.PI);
-        v = (v + Math.PI / 2) / Math.PI;
-        return new Vector(u, v, 0);
+            var u = Math.atan2(p.z, p.x);
+            var v = Math.atan2(p.y, new Vector(p.x, 0, p.z).Length());
+            u = 1 - (u + Math.PI) / (2 * Math.PI);
+            v = (v + Math.PI / 2) / Math.PI;
+            return new Vector(u, v, 0);
     }
 
     @Override

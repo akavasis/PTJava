@@ -53,7 +53,7 @@ class Cylinder extends TransformedShape implements IShape {
 
     @Override
     public Vector NormalAt(Vector p) {
-        p.Z = 0;
+        p.z = 0;
         return p.Normalize();
     }
     
@@ -62,9 +62,9 @@ class Cylinder extends TransformedShape implements IShape {
         double r = this.Radius;
         Vector o = ray.Origin;
         Vector d = ray.Direction;
-        double a = d.X * d.X + d.Y * d.Y;
-        double b = 2*o.X*d.X + 2*o.Y*d.Y;
-        double c = o.X*o.X + o.Y*o.Y - r*r;
+        double a = d.x * d.x + d.y * d.y;
+        double b = 2*o.x*d.x + 2*o.y*d.y;
+        double c = o.x*o.x + o.y*o.y - r*r;
         double q = b*b - 4*a*c;
         if(q < EPS )
         {
@@ -80,8 +80,8 @@ class Cylinder extends TransformedShape implements IShape {
             t0 = t1;
             t1 = temp;
         }
-        double z0 = o.Z + t0*d.Z;
-        double z1 = o.Z + t1*d.Z;
+        double z0 = o.z + t0*d.z;
+        double z1 = o.z + t1*d.z;
         if (t0 > EPS && this.Z0 < z0 && z0 < this.Z1)
         {
             return new Hit(this, t0, null);
