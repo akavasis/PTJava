@@ -2,6 +2,7 @@ package gopt2j;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.ArrayUtils;
 
 class Scene {
 
@@ -10,8 +11,8 @@ class Scene {
     double TextureAngle;
     List<IShape> shapeList; 
     List<IShape> lightList;
-    IShape[] Lights;
-    IShape[] Shapes;
+    IShape[] LightsArray;
+    IShape[] ShapesArray;
     Tree tree;
     int rays;
 
@@ -20,29 +21,31 @@ class Scene {
         TextureAngle = 0;
         shapeList = new ArrayList<>();
         lightList = new ArrayList<>();
-        Lights = new IShape[0];
-        Shapes = new IShape[0];
+        LightsArray = new IShape[]{};
+        ShapesArray = new IShape[]{};
         rays = 0;
     }
 
     public void Compile() {
-        for (IShape shape : Shapes) {
+        for (IShape shape : ShapesArray) {
             if (shape != null) {
                 shape.Compile();
             }
         }
         if (tree == null) {
-            tree = new Tree(Shapes);
+            tree = new Tree(ShapesArray);
         }
     }
 
     void Add(IShape shape) {
-        shapeList.add(shape);
         if (shape.MaterialAt(new Vector()).Emittance > 0) {
             lightList.add(shape);
-            Lights = lightList.toArray(Shapes);
+            IShape[] light_list = new IShape[lightList.size()];
+            LightsArray = lightList.toArray(light_list);
         }
-        Shapes = shapeList.toArray(Shapes);
+        shapeList.add(shape);
+        IShape[] shape_list = new IShape[shapeList.size()];
+        ShapesArray = shapeList.toArray(shape_list);
     }
 
     int RayCount() {

@@ -20,28 +20,6 @@ public class Hit {
     public static Hit NoHit = new Hit(null, INF, null);
 
     HitInfo Info(Ray r) {
-
-        /*if (this.HitInfo != null) {
-            return this.HitInfo;
-        }
-
-        IShape shape = this.Shape;
-        Vector position = r.Position(this.T);
-        Vector normal = this.Shape.NormalAt(position);
-        Material material = Material.MaterialAt(this.Shape, normal);
-        Boolean inside = false;
-
-        if (normal.Dot(r.Direction) > 0) {
-            normal = normal.Negate();
-            inside = true;
-            if (shape instanceof Volume) {
-                inside = false;
-            }
-        }
-
-        Ray ray = new Ray(position, normal);
-        return new HitInfo(Shape, position, normal, ray, material, inside);*/
-        
         if (HitInfo != null)
             return HitInfo;
         
@@ -71,7 +49,6 @@ public class Hit {
     }
 
     public static class HitInfo {
-
         IShape shape;
         Vector position;
         Vector normal;
@@ -88,5 +65,4 @@ public class Hit {
             this.inside = inside;
         }
     }
-
 }

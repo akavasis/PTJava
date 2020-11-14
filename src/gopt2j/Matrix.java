@@ -131,65 +131,65 @@ public class Matrix {
     }
 
     Box MulBox(Box box) {
-        Vector r = new Vector(x00, x10, x20);
-        Vector u = new Vector(x01, x11, x21);
-        Vector b = new Vector(x02, x12, x22);
-        Vector t = new Vector(x03, x13, x23);
-        Vector xa = r.MulScalar(box.Min.x);
-        Vector xb = r.MulScalar(box.Max.x);
-        Vector ya = u.MulScalar(box.Min.y);
-        Vector yb = u.MulScalar(box.Max.y);
-        Vector za = b.MulScalar(box.Min.z);
-        Vector zb = b.MulScalar(box.Max.z);
+        var r = new Vector(x00, x10, x20);
+        var u = new Vector(x01, x11, x21);
+        var b = new Vector(x02, x12, x22);
+        var t = new Vector(x03, x13, x23);
+        var xa = r.MulScalar(box.Min.x);
+        var xb = r.MulScalar(box.Max.x);
+        var ya = u.MulScalar(box.Min.y);
+        var yb = u.MulScalar(box.Max.y);
+        var za = b.MulScalar(box.Min.z);
+        var zb = b.MulScalar(box.Max.z);
 
         //xa, xb = xa.Min(xb), xa.Max(xb)        
-        xa = xa.Min(xb);
-        xb = xa.Max(xb);
+        //Tuple2<Vector,Vector> xab = Tuple.valueOf(xa.Min(xb), xa.Max(xb));
+        //xa = xab._0;
+        //xb = xab._1;
+        Tuple2<Vector,Vector> xab = Tuple.valueOf(xa, xb);
+        xa = xab._0.Min(xab._1);
+        xb = xab._0.Max(xab._1);
         
-        
-        
-
         //ya, yb = ya.Min(yb), ya.Max(yb)
-        ya = ya.Min(yb);
-        yb = ya.Max(yb);
+        //Tuple2<Vector,Vector> yab = Tuple.valueOf(ya.Min(yb), ya.Max(yb));
+        //ya = yab._0;
+        //yb = yab._1;
+        Tuple2<Vector,Vector> yab = Tuple.valueOf(ya, yb);
+        ya = yab._0.Min(yab._1);
+        yb = yab._0.Max(yab._1);
         
-        var yswap = ya;
-        ya = yb;
-        yb = yswap;
-
         //za, zb = za.Min(zb), za.Max(zb)
-        za = za.Min(zb);
-        zb = za.Max(zb);
+        //Tuple2<Vector,Vector> zab = Tuple.valueOf(za.Min(zb), za.Max(zb));
+        //za = zab._0;
+        //zb = zab._1;
+        Tuple2<Vector,Vector> zab = Tuple.valueOf(za, zb);
+        za = zab._0.Min(zab._1);
+        zb = zab._0.Max(zab._1);
         
-        var zswap = za;
-        za = zb;
-        zb = zswap;
-
-        Vector min = xa.Add(ya).Add(za).Add(t);
-        Vector max = xb.Add(yb).Add(zb).Add(t);
+        var min = xa.Add(ya).Add(za).Add(t);
+        var max = xb.Add(yb).Add(zb).Add(t);
         return new Box(min, max);
     }
-    
-    
 
     Matrix Transpose() {
         return new Matrix(x00, x10, x20, x30, x01, x11, x21, x31,
                 x02, x12, x22, x32, x03, x13, x23, x33);
     }
 
-    double Determinant() {
-        return (x00 * x11 * x22 * x33 - x00 * x11 * x23 * x32
-                + x00 * x12 * x23 * x31 - x00 * x12 * x21 * x33
-                + x00 * x13 * x21 * x32 - x00 * x13 * x22 * x31
-                - x01 * x12 * x23 * x30 + x01 * x12 * x20 * x33
-                - x01 * x13 * x20 * x32 + x01 * x13 * x22 * x30
-                - x01 * x10 * x22 * x33 + x01 * x10 * x23 * x32
-                + x02 * x13 * x20 * x31 - x02 * x13 * x21 * x30
-                + x02 * x10 * x21 * x33 - x02 * x10 * x23 * x31
-                + x02 * x11 * x23 * x30 - x02 * x11 * x20 * x33
-                - x03 * x10 * x21 * x32 + x03 * x10 * x22 * x31
-                - x03 * x11 * x22 * x30 + x03 * x11 * x20 * x32
-                - x03 * x12 * x20 * x31 + x03 * x12 * x21 * x30);
+    public double Determinant()
+    {
+        return (x00 * x11 * x22 * x33 - x00 * x11 * x23 * x32 +
+                x00 * x12 * x23 * x31 - x00 * x12 * x21 * x33 +
+                x00 * x13 * x21 * x32 - x00 * x13 * x22 * x31 -
+                x01 * x12 * x23 * x30 + x01 * x12 * x20 * x33 -
+                x01 * x13 * x20 * x32 + x01 * x13 * x22 * x30 -
+                x01 * x10 * x22 * x33 + x01 * x10 * x23 * x32 +
+                x02 * x13 * x20 * x31 - x02 * x13 * x21 * x30 +
+                x02 * x10 * x21 * x33 - x02 * x10 * x23 * x31 +
+                x02 * x11 * x23 * x30 - x02 * x11 * x20 * x33 -
+                x03 * x10 * x21 * x32 + x03 * x10 * x22 * x31 -
+                x03 * x11 * x22 * x30 + x03 * x11 * x20 * x32 -
+                x03 * x12 * x20 * x31 + x03 * x12 * x21 * x30);
     }
 
     Matrix Inverse() {

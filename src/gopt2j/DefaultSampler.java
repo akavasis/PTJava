@@ -138,14 +138,14 @@ class DefaultSampler implements Sampler {
     }
 
     Colour sampleLights(Scene scene, Ray n, Random rand) {
-        int nLights = scene.Lights.length;
+        int nLights = scene.LightsArray.length;
         if (nLights == 0) {
             return Colour.Black;
         }
 
         if (LightMode == LightMode.LightModeAll) {
             Colour result = new Colour();
-            for (IShape light : scene.Lights) {
+            for (IShape light : scene.LightsArray) {
                 if (light != null) {
                     result = result.Add(sampleLight(scene, n, rand, light));
                 }
@@ -153,7 +153,7 @@ class DefaultSampler implements Sampler {
             return result;
         } else {
             // pick a random light
-            IShape light = scene.Lights[rand.nextInt(nLights)];
+            IShape light = scene.LightsArray[rand.nextInt(nLights)];
             return sampleLight(scene, n, rand, light).MulScalar(nLights);
         }
     }

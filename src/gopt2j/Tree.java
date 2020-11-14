@@ -154,7 +154,7 @@ class Tree {
             int right = 0;
             for (IShape shape : this.Shapes) {
                 
-                if(shape !=null)
+                if(shape != null)
                 {
                     Box box = shape.BoundingBox();
                     boolean[] lr = box.Partition(axis, point);

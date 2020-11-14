@@ -59,29 +59,28 @@ public class Example {
         renderer.IterativeRender("materialspheres.png", 100);
     }
     
-    static void ellipsoid() throws IOException, InterruptedException
+    static void ellipsoid() throws IOException, InterruptedException {
+        var scene = new Scene();
+        var wall = Material.GlossyMaterial(Colour.HexColor(0xFCFAE1), 1.333, Util.Radians(30));
+        scene.Add(Sphere.NewSphere(new Vector(10, 10, 10), 2, Material.LightMaterial(Colour.White, 50)));
+        scene.Add(Cube.NewCube(new Vector(-100, -100, -100), new Vector(-12, 100, 100), wall));
+        scene.Add(Cube.NewCube(new Vector(-100, -100, -100), new Vector(100, -1, 100), wall));
+        var material = Material.GlossyMaterial(Colour.HexColor(0x167F39), 1.333, Util.Radians(30));
+        var sphere = Sphere.NewSphere(new Vector(), 1, material);
+        for (int i = 0; i < 180; i += 30)
         {
-            var scene = new Scene();
-            var wall = Material.GlossyMaterial(Colour.HexColor(0xFCFAE1), 1.333, Util.Radians(30));
-            scene.Add(Sphere.NewSphere(new Vector(10, 10, 10), 2, Material.LightMaterial(Colour.White, 50)));
-            scene.Add(Cube.NewCube(new Vector(-100, -100, -100), new Vector(-12, 100, 100), wall));
-            scene.Add(Cube.NewCube(new Vector(-100, -100, -100), new Vector(100, -1, 100), wall));
-            var material = Material.GlossyMaterial(Colour.HexColor(0x167F39), 1.333, Util.Radians(30));
-            var sphere = Sphere.NewSphere(new Vector(), 1, material);
-            for (int i = 0; i < 180; i += 30)
-            {
-                var m = Matrix.Identity;
-                m = m.Scale(new Vector(0.3, 1, 5)).Mul(m);
-                m = m.Rotate(new Vector(0, 1, 0), Util.Radians((double)i)).Mul(m);
-                var shape = TransformedShape.NewTransformedShape(sphere, m);
-                scene.Add(shape);
-            }
-            var camera = Camera.LookAt(new Vector(8, 8, 0), new Vector(1, 0, 0), new Vector(0, 1, 0), 45);
-            var sampler = new DefaultSampler().NewSampler(4, 4);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
-            renderer.IterativeRender("ellipsoid.png", 1000);
+            var m = Matrix.Identity;
+            m = m.Scale(new Vector(0.3, 1, 5)).Mul(m);
+            m = m.Rotate(new Vector(0, 1, 0), Util.Radians((double)i)).Mul(m);
+            var shape = TransformedShape.NewTransformedShape(sphere, m);
+            scene.Add(shape);
         }
-
+        var camera = Camera.LookAt(new Vector(8, 8, 0), new Vector(1, 0, 0), new Vector(0, 1, 0), 45);
+        var sampler = new DefaultSampler().NewSampler(4, 4);
+        var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
+        renderer.IterativeRender("ellipsoid.png", 1000);
+    }
+    
     static void Example1() throws IOException, InterruptedException {
         Scene scene = new Scene();
         scene.Add(Sphere.NewSphere(new Vector(1.5, 1.25, 0), 1.25, Material.SpecularMaterial(Colour.HexColor(0x004358), 1.3)));

@@ -32,30 +32,28 @@ class TransformedShape implements IShape {
 
     @Override
     public Hit Intersect(Ray r) {
-        Ray shapeRay = Matrix.Inverse().MulRay(r);
-        Hit hit = Shape.Intersect(shapeRay);
+        var shapeRay = Matrix.Inverse().MulRay(r);
+        var hit = Shape.Intersect(shapeRay);
 
-        if(!hit.Ok())
-        {
+        if (!hit.Ok())
             return hit;
+        
+        var shape = hit.Shape;
+        var shapePosition = shapeRay.Position(hit.T);
+        var shapeNormal = shape.NormalAt(shapePosition);
+        var position = Matrix.MulPosition(shapePosition);
+        var normal = Matrix.Inverse().Transpose().MulDirection(shapeNormal);
+        var material = Material.MaterialAt(shape, shapePosition);
+        var inside = false;
+
+        if (shapeNormal.Dot(shapeRay.Direction) > 0)
+        {
+            normal = normal.Negate();
+            inside = true;
         }
 
-        IShape shape = hit.Shape;
-        Vector shapePosition = shapeRay.Position(hit.T);
-        Vector shapeNormal = shape.NormalAt(shapePosition);
-        Vector position = Matrix.MulPosition(shapePosition);
-        Vector normal = Matrix.Inverse().Transpose().MulDirection(shapeNormal);
-        Material material = Material.MaterialAt(shape, shapePosition);
-        boolean inside = false;
-
-        if(shapeNormal.Dot(shapeRay.Direction) > 0)
-            {
-                normal = normal.Negate();
-                inside = true;
-            }
-
-        Ray ray = new Ray(position, normal);
-        HitInfo info = new HitInfo(shape, position, normal, ray, material, inside);
+        var ray = new Ray(position, normal);
+        var info = new HitInfo(shape, position, normal, ray, material, inside);
         hit.T = position.Sub(r.Origin).Length();
         hit.HitInfo = info;
         return hit;

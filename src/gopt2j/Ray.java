@@ -78,24 +78,11 @@ public class Ray {
 
         if (reflect) {
             var reflected = n.Reflect(this);
-            //reflected.condition = true;
-            //reflected.p = p;
-            //return reflected.ConeBounce(material.Gloss, u, v, rand);
-            //return new Tuple3<>(reflected.ConeBounce(material.Gloss, u, v, rand), true, p);
             return Tuple.valueOf(reflected.ConeBounce(material.Gloss, u, v, rand), true, p);
-            
         } else if (material.Transparent) {
             var refracted = n.Refract(this, n1, n2);
-            //refracted.Origin = refracted.Origin.Add(refracted.Direction.MulScalar(1e-4));
-            //refracted.condition = true;
-            //refracted.p = 1 - p;
-            //return new Tuple3<>(refracted.ConeBounce(material.Gloss, u, v, rand), true, 1-p);
             return Tuple.valueOf(refracted.ConeBounce(material.Gloss, u, v, rand), true, 1-p);
         } else {
-            //var bounced = n.WeightedBounce(u, v, rand);
-            //bounced.condition = false;
-            //bounced.p = 1 - p;
-            //return new Tuple3<>(n.WeightedBounce(u, v, rand), false, 1 - p);
             return Tuple.valueOf(n.WeightedBounce(u, v, rand), false, 1 - p);
         }
     }

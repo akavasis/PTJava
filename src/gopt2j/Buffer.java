@@ -104,10 +104,6 @@ class Buffer {
                         pixelColor = new Colour(p, p, p);
                         break;
                 }
-                //int r = Math.max(0, Math.min(255, (int)(Math.floor(pixelColor.r * 256.0))));
-                //int g = Math.max(0, Math.min(255, (int)(Math.floor(pixelColor.g * 256.0))));
-                //int b = Math.max(0, Math.min(255, (int)(Math.floor(pixelColor.b * 256.0))));
-                //renderedImage.setRGB(x, y, 255 << 24 | (r<<16) | (g<<8) | b );
                 renderedImage.setRGB(x, y, Colour.getIntFromColor(pixelColor.r, pixelColor.g, pixelColor.b));
             }
         }
