@@ -74,7 +74,7 @@ public class Colour {
         else return val;
     }   
 
-    public int getIntFromColor(double red, double green, double blue) {
+    public static int getIntFromColor(double red, double green, double blue) {
         
         if (Double.isNaN(red))
             red = 0.0;

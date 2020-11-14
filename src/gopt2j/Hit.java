@@ -7,17 +7,21 @@ public class Hit {
     public double T;
     public HitInfo HitInfo;
 
-    public static Hit NoHit = new Hit(null, INF, null);
-
     Hit(IShape shape, double t, HitInfo hinfo) {
         this.Shape = shape;
         this.T = t;
         this.HitInfo = hinfo;
     }
+    
+    boolean Ok() {
+        return this.T < INF;
+    }
+    
+    public static Hit NoHit = new Hit(null, INF, null);
 
     HitInfo Info(Ray r) {
 
-        if (this.HitInfo != null) {
+        /*if (this.HitInfo != null) {
             return this.HitInfo;
         }
 
@@ -36,11 +40,34 @@ public class Hit {
         }
 
         Ray ray = new Ray(position, normal);
-        return new HitInfo(Shape, position, normal, ray, material, inside);
-    }
+        return new HitInfo(Shape, position, normal, ray, material, inside);*/
+        
+        if (HitInfo != null)
+            return HitInfo;
+        
+        var shape = Shape;
+        var position = r.Position(T);
+        var normal = shape.NormalAt(position);
+        var material = Material.MaterialAt(shape, position);
+        var inside = false;
 
-    boolean Ok() {
-        return this.T < INF;
+        if (normal.Dot(r.Direction) > 0)
+        {
+            normal = normal.Negate();
+            inside = true;
+
+            if(shape instanceof Volume)
+            {
+
+            } else if(shape instanceof SDFShape)
+            {
+
+            } else if(shape instanceof SphericalHarmonic)
+            inside = false;
+        }
+        
+        Ray ray = new Ray(position, normal);
+        return new HitInfo(shape, position, normal, ray, material, inside);
     }
 
     public static class HitInfo {

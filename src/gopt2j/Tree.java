@@ -2,9 +2,11 @@ package gopt2j;
 
 import static gopt2j.Box.BoxForShapes;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javafx.util.Pair;
+import org.apache.commons.lang3.ArrayUtils;
 
 class Tree {
 
@@ -30,15 +32,15 @@ class Tree {
 
     public Hit Intersect(Ray r) {
         
-        Double[] tm = this.Box.Intersect(r);
+        Double[] tm = Box.Intersect(r);
 
-        var tmin = tm[0];
-        var tmax = tm[1];
+        double tmin = tm[0];
+        double tmax = tm[1];
 
         if (tmax < tmin || tmax <= 0) {
             return Hit.NoHit;
         }
-        return Root.Intersect(r, tmin, tmax);
+        return this.Root.Intersect(r, tmin, tmax);
     }
 
     public class Node {
@@ -172,32 +174,32 @@ class Tree {
             }
         }
 
-        @SuppressWarnings("unchecked")
-        Pair<List<IShape>, List<IShape>> Partition(int size, Axis axis, double point) {
-            List<IShape> left = new ArrayList<>();
-            List<IShape> right = new ArrayList<>();
-
+        IShape[][] Partition(int size, Axis axis, double point) {
+            ArrayList<IShape> left = new ArrayList<>();
+            ArrayList<IShape> right = new ArrayList<>();
+            
             for (IShape shape : Shapes) {
-
                 if (shape != null) {
                     Box box = shape.BoundingBox();
 
                     boolean[] lr = box.Partition(axis, point);
 
                     if (lr[0]) {
-                        //ArrayUtils.add(left, shape);
                         left.add(shape);
                     }
 
                     if (lr[1]) {
-                        //ArrayUtils.add(right, shape);
+            
                         right.add(shape);
                     }
                 }
-
             }
-
-            return new Pair(left, right);
+            
+            IShape[] lp = new IShape[left.size()];
+            IShape[] rp = new IShape[right.size()];
+            IShape[] leftp = left.toArray(lp);
+            IShape[] rightp = right.toArray(rp);
+            return new IShape[][]{leftp,rightp}; 
 
         }
 
@@ -220,18 +222,18 @@ class Tree {
                     xs.add(box.Max.x);
                     ys.add(box.Min.y);
                     ys.add(box.Max.y);
-                    zs.add(box.Min.z);
-                    zs.add(box.Max.z);
+                    zs.add(box.Min.y);
+                    zs.add(box.Max.y);
                 }
                 
             }
 
-            //Collections.sort(xs);
-            //Collections.sort(ys);
-            //Collections.sort(zs);
-            xs = xs.stream().sorted().collect(Collectors.toList());
-            ys = ys.stream().sorted().collect(Collectors.toList());
-            zs = zs.stream().sorted().collect(Collectors.toList());
+            Collections.sort(xs);
+            Collections.sort(ys);
+            Collections.sort(zs);
+            //xs = xs.stream().sorted().collect(Collectors.toList());
+            //ys = ys.stream().sorted().collect(Collectors.toList());
+            //zs = zs.stream().sorted().collect(Collectors.toList());
 
             double mx = Median(xs);
             double my = Median(ys);
@@ -266,11 +268,11 @@ class Tree {
                 return;
             }
 
-            Pair<List<IShape>, List<IShape>> Partition = this.Partition(best, bestAxis, bestPoint);
+            var lr = Partition(best, bestAxis, bestPoint);
             Axis = bestAxis;
             Point = bestPoint;
-            Left = NewNode(Partition.getKey().toArray(Shapes));
-            Right = NewNode(Partition.getValue().toArray(Shapes));
+            Left = NewNode(lr[0]);
+            Right = NewNode(lr[1]);
             Left.Split(depth + 1);
             Right.Split(depth + 1);
             Shapes = null; // only needed at leaf nodes

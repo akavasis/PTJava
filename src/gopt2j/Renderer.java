@@ -26,7 +26,7 @@ final class Renderer {
     Renderer() {
     }
 
-    static Renderer NewRenderer(Scene scene, Camera camera, Sampler sampler, int w, int h) {
+    public static Renderer NewRenderer(Scene scene, Camera camera, Sampler sampler, int w, int h) {
         Renderer r = new Renderer();
         r.Scene = scene;
         r.Camera = camera;

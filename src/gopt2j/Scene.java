@@ -5,17 +5,24 @@ import java.util.List;
 
 class Scene {
 
-    Colour Color = new Colour();
+    Colour Color; 
     ITexture Texture;
-    double TextureAngle = 0;
-    List<IShape> shapeList = new ArrayList<>();
-    List<IShape> lightList = new ArrayList<>();
-    IShape[] Lights = new IShape[]{};
-    IShape[] Shapes = new IShape[]{};
+    double TextureAngle;
+    List<IShape> shapeList; 
+    List<IShape> lightList;
+    IShape[] Lights;
+    IShape[] Shapes;
     Tree tree;
-    int rays = 0;
+    int rays;
 
     Scene() {
+        Color = new Colour();
+        TextureAngle = 0;
+        shapeList = new ArrayList<>();
+        lightList = new ArrayList<>();
+        Lights = new IShape[0];
+        Shapes = new IShape[0];
+        rays = 0;
     }
 
     public void Compile() {

@@ -34,7 +34,7 @@ public class Example {
 
     Example() {
     }
-
+   
     static void MaterialSpheres() throws IOException, InterruptedException {
         Scene scene = new Scene();
         double r = 0.4;
@@ -53,11 +53,34 @@ public class Example {
         scene.Add(Cube.NewCube(new Vector(-1000, -1, -1000), new Vector(1000, 0, 1000), Material.GlossyMaterial(Colour.HexColor(0xFFFFFF), 1.4, Util.Radians(20))));
         scene.Add(Sphere.NewSphere(new Vector(0, 5, 0), 1, Material.LightMaterial(Colour.White, 25)));
         Camera camera = Camera.LookAt(new Vector(0, 3, 6), new Vector(0, 1, 0), new Vector(0, 1, 0), 30);
-        DefaultSampler sampler = new DefaultSampler().NewSampler(3,3);
+        DefaultSampler sampler = new DefaultSampler().NewSampler(4,4);
         Renderer renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080);
         //renderer.FireflySamples = 32;
         renderer.IterativeRender("materialspheres.png", 100);
     }
+    
+    static void ellipsoid() throws IOException, InterruptedException
+        {
+            var scene = new Scene();
+            var wall = Material.GlossyMaterial(Colour.HexColor(0xFCFAE1), 1.333, Util.Radians(30));
+            scene.Add(Sphere.NewSphere(new Vector(10, 10, 10), 2, Material.LightMaterial(Colour.White, 50)));
+            scene.Add(Cube.NewCube(new Vector(-100, -100, -100), new Vector(-12, 100, 100), wall));
+            scene.Add(Cube.NewCube(new Vector(-100, -100, -100), new Vector(100, -1, 100), wall));
+            var material = Material.GlossyMaterial(Colour.HexColor(0x167F39), 1.333, Util.Radians(30));
+            var sphere = Sphere.NewSphere(new Vector(), 1, material);
+            for (int i = 0; i < 180; i += 30)
+            {
+                var m = Matrix.Identity;
+                m = m.Scale(new Vector(0.3, 1, 5)).Mul(m);
+                m = m.Rotate(new Vector(0, 1, 0), Util.Radians((double)i)).Mul(m);
+                var shape = TransformedShape.NewTransformedShape(sphere, m);
+                scene.Add(shape);
+            }
+            var camera = Camera.LookAt(new Vector(8, 8, 0), new Vector(1, 0, 0), new Vector(0, 1, 0), 45);
+            var sampler = new DefaultSampler().NewSampler(4, 4);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
+            renderer.IterativeRender("ellipsoid.png", 1000);
+        }
 
     static void Example1() throws IOException, InterruptedException {
         Scene scene = new Scene();
@@ -126,6 +149,66 @@ public class Example {
         var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
         //renderer.FireflySamples = 64;
         renderer.IterativeRender("qbert.png", 100);
+    }
+    
+    public static void runway() throws InterruptedException, IOException
+    {
+        int radius = 2;
+        int height = 3;
+        int emission = 3;
+        Scene scene = new Scene();
+        var white = Material.DiffuseMaterial(Colour.White);
+        var floor = Cube.NewCube(new Vector(-250, -1500, -1), new Vector(250, 6200, 0), white);
+        scene.Add(floor);
+        var light = Material.LightMaterial(Colour.Kelvin(2700), emission);
+
+        for (int y = 0; y <= 6000; y += 40)
+        {
+            scene.Add(Sphere.NewSphere(new Vector(-100, (double)y, height), radius, light));
+            scene.Add(Sphere.NewSphere(new Vector(0, (double)y, height), radius, light));
+            scene.Add(Sphere.NewSphere(new Vector(100, (double)y, height), radius, light));
+
+        }
+
+        for (int y = -40; y >= -750; y -= 20)
+        {
+            scene.Add(Sphere.NewSphere(new Vector(-10, (double)y, height), radius, light));
+            scene.Add(Sphere.NewSphere(new Vector(0, (double)y, height), radius, light));
+            scene.Add(Sphere.NewSphere(new Vector(10, (double)y, height), radius, light));
+        }
+
+        var green = Material.LightMaterial(Colour.HexColor(0x0BDB46), emission);
+        var red = Material.LightMaterial(Colour.HexColor(0xDC4522), emission);
+
+        for (int x = -160; x <= 160; x += 10)
+        {
+            scene.Add(Sphere.NewSphere(new Vector((double)x, -20, height), radius, green));
+            scene.Add(Sphere.NewSphere(new Vector((double)x, 6100, height), radius, red));
+        }
+
+        scene.Add(Sphere.NewSphere(new Vector(-160, 250, height), radius, red));
+        scene.Add(Sphere.NewSphere(new Vector(-180, 250, height), radius, red));
+        scene.Add(Sphere.NewSphere(new Vector(-200, 250, height), radius, light));
+        scene.Add(Sphere.NewSphere(new Vector(-220, 250, height), radius, light));
+
+        for (int i = 0; i < 5; i++)
+        {
+            var y = (double)((i + 1) * -120);
+
+            for (int j = 1; j <= 4; j++)
+            {
+                var x = (double)(j + 4) * 7.5;
+                scene.Add(Sphere.NewSphere(new Vector(x, y, height), radius, red));
+                scene.Add(Sphere.NewSphere(new Vector(-x, y, height), radius, red));
+                scene.Add(Sphere.NewSphere(new Vector(x, -y, height), radius, light));
+                scene.Add(Sphere.NewSphere(new Vector(-x, -y, height), radius, light));
+            }
+        }
+        var camera = Camera.LookAt(new Vector(0, -1500, 200), new Vector(0, -100, 0), new Vector(0, 0, 1), 20);
+        camera.SetFocus(new Vector(0, 20000, 0), 1);
+        var sampler = new DefaultSampler().NewSampler(4, 4);
+        var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
+        renderer.IterativeRender("runway.png", 1000);
     }
 
 }

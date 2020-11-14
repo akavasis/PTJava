@@ -97,8 +97,6 @@ class DefaultSampler implements Sampler {
                     reflected = (Boolean)newRay._1;
                     p = (Double)newRay._2;
                     
-                    
-
                     if (BounceType.values()[i] == BounceType.BounceTypeAny) {
                         p = 1.0;
                     }

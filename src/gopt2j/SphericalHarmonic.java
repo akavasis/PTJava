@@ -6,7 +6,7 @@ class SphericalHarmonic extends TransformedShape implements IShape {
     Material NegativeMaterial;
     double harmonicFunction;
     Mesh mesh;
-
+    
     @Override
     public Material MaterialAt(Vector p) {
         double h = this.EvaluateHarmonic(p);

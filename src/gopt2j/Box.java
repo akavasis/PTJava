@@ -80,19 +80,19 @@ class Box {
         
         if(x1 > x2)
         {
-            Tuple2<Double,Double> x1_x2 = Tuple.valueOf(x2, x1);//new Tuple2<>(x2,x1);
+            Tuple2<Double,Double> x1_x2 = Tuple.valueOf(x2, x1);
             x1 = x1_x2._0;
             x2 = x1_x2._1;
         }
         if(y1 > y2)
         {
-            Tuple2<Double,Double> y1_y2 = Tuple.valueOf(y2, y1);//new Tuple2<>(y2,y1);
+            Tuple2<Double,Double> y1_y2 = Tuple.valueOf(y2, y1);
             y1 = y1_y2._0;
             y2 = y1_y2._1;
         }
         if(z1 > z2)
         {
-            Tuple2<Double,Double> z1_z2 = Tuple.valueOf(z2, z1);//new Tuple2<>(z1,z2);
+            Tuple2<Double,Double> z1_z2 = Tuple.valueOf(z2, z1);
             z1 = z1_z2._0;
             z2 = z1_z2._1;
         }
