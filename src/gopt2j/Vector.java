@@ -117,10 +117,9 @@ public class Vector {
     }
 
     public Vector MinAxis() {
-        double x, y, z;
-        x = Math.abs(this.x);
-        y = Math.abs(this.y);
-        z = Math.abs(this.z);
+        var x = Math.abs(this.x);
+        var y = Math.abs(this.y);
+        var z = Math.abs(this.z);
         if (x <= y && x <= z) {
             return new Vector(1, 0, 0);
         } else if (y <= x && y <= z) {

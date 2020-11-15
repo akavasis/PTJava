@@ -143,28 +143,28 @@ public class Matrix {
         var zb = b.MulScalar(box.Max.z);
 
         //xa, xb = xa.Min(xb), xa.Max(xb)        
-        //Tuple2<Vector,Vector> xab = Tuple.valueOf(xa.Min(xb), xa.Max(xb));
-        //xa = xab._0;
-        //xb = xab._1;
-        Tuple2<Vector,Vector> xab = Tuple.valueOf(xa, xb);
-        xa = xab._0.Min(xab._1);
-        xb = xab._0.Max(xab._1);
+        Tuple2<Vector,Vector> xab = Tuple.valueOf(xa.Min(xb), xa.Max(xb));
+        xa = xab._0;
+        xb = xab._1;
+        //Tuple2<Vector,Vector> xab = Tuple.valueOf(xb, xa);
+        //xa = xab._0.Min(xab._1);
+        //xb = xab._0.Max(xab._1);
         
         //ya, yb = ya.Min(yb), ya.Max(yb)
-        //Tuple2<Vector,Vector> yab = Tuple.valueOf(ya.Min(yb), ya.Max(yb));
-        //ya = yab._0;
-        //yb = yab._1;
-        Tuple2<Vector,Vector> yab = Tuple.valueOf(ya, yb);
-        ya = yab._0.Min(yab._1);
-        yb = yab._0.Max(yab._1);
+        Tuple2<Vector,Vector> yab = Tuple.valueOf(ya.Min(yb), ya.Max(yb));
+        ya = yab._0;
+        yb = yab._1;
+        //Tuple2<Vector,Vector> yab = Tuple.valueOf(yb, ya);
+        //ya = yab._0.Min(yab._1);
+        //yb = yab._0.Max(yab._1);
         
         //za, zb = za.Min(zb), za.Max(zb)
-        //Tuple2<Vector,Vector> zab = Tuple.valueOf(za.Min(zb), za.Max(zb));
-        //za = zab._0;
-        //zb = zab._1;
-        Tuple2<Vector,Vector> zab = Tuple.valueOf(za, zb);
-        za = zab._0.Min(zab._1);
-        zb = zab._0.Max(zab._1);
+        Tuple2<Vector,Vector> zab = Tuple.valueOf(za.Min(zb), za.Max(zb));
+        za = zab._0;
+        zb = zab._1;
+        //Tuple2<Vector,Vector> zab = Tuple.valueOf(zb, za);
+        //za = zab._0.Min(zab._1);
+        //zb = zab._0.Max(zab._1);
         
         var min = xa.Add(ya).Add(za).Add(t);
         var max = xb.Add(yb).Add(zb).Add(t);

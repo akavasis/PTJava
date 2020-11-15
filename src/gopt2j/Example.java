@@ -55,7 +55,6 @@ public class Example {
         Camera camera = Camera.LookAt(new Vector(0, 3, 6), new Vector(0, 1, 0), new Vector(0, 1, 0), 30);
         DefaultSampler sampler = new DefaultSampler().NewSampler(4,4);
         Renderer renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080);
-        //renderer.FireflySamples = 32;
         renderer.IterativeRender("materialspheres.png", 100);
     }
     
@@ -146,7 +145,6 @@ public class Example {
         var camera = Camera.LookAt(new Vector(fn * 2, fn * 2, fn * 2), new Vector(0, 0, fn / 4), new Vector(0, 0, 1), 35);
         var sampler = new DefaultSampler().NewSampler(4, 4);
         var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
-        //renderer.FireflySamples = 64;
         renderer.IterativeRender("qbert.png", 100);
     }
     

@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-final class Renderer {
+final class Renderer implements Runnable {
 
     Scene Scene;
     Camera Camera;
@@ -19,11 +19,15 @@ final class Renderer {
     double AdaptiveExponent;
     public int FireflySamples;
     double FireflyThreshold;
-    int NumCPU;
+    
+    private static Thread lookupThreads[];
+    private int numThreads;
+    
     int iterations;
     String pathTemplate;
 
     Renderer() {
+        
     }
 
     public static Renderer NewRenderer(Scene scene, Camera camera, Sampler sampler, int w, int h) {
@@ -39,12 +43,15 @@ final class Renderer {
         r.AdaptiveThreshold = 1;
         r.FireflySamples = 0;
         r.FireflyThreshold = 1;
-        r.NumCPU = Runtime.getRuntime().availableProcessors();
+        r.numThreads = Runtime.getRuntime().availableProcessors();
+        lookupThreads = new Thread[r.numThreads];
 
         return r;
     }
 
-    public void Render() {
+    
+    @Override
+    public void run() {
         Scene scene = Scene;
         Camera camera = Camera;
         Sampler sampler = Sampler;
@@ -52,74 +59,82 @@ final class Renderer {
         int w = buf.W;
         int h = buf.H;
         int spp = SamplesPerPixel;
-        int sppRoot = (int) (Math.sqrt((double)(SamplesPerPixel)));
-        int ncpu = 1;
+        int sppRoot = (int) (Math.sqrt((double) (SamplesPerPixel)));
         scene.Compile();
         scene.rays = 0;
         Random rand = new Random();
         double fu, fv;
 
-        for (int i = 0; i < ncpu; i++) {
-            for (int y = i; y < h; y += ncpu) {
-                for (int x = 0; x < w; x++) {
-                    if (StratifiedSampling) {
-                        for (int u = 0; u < sppRoot; u++) {
-                            for (int v = 0; v < sppRoot; v++) {
-                                fu = ((double) u + 0.5) / (double) sppRoot;
-                                fv = ((double) v + 0.5) / (double) sppRoot;
-                                Ray ray = camera.CastRay(x, y, w, h, fu, fv, rand);
-                                Colour sample = sampler.Sample(scene, ray, rand);
-                                buf.AddSample(x, y, sample);
-                            }
-                        }
-                    } else {
-                        // Random subsampling
-                        for (int ii = 0; ii < spp; ii++) {
-                            fu = rand.nextDouble();
-                            fv = rand.nextDouble();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                if (StratifiedSampling) {
+                    for (int u = 0; u < sppRoot; u++) {
+                        for (int v = 0; v < sppRoot; v++) {
+                            fu = ((double) u + 0.5) / (double) sppRoot;
+                            fv = ((double) v + 0.5) / (double) sppRoot;
                             Ray ray = camera.CastRay(x, y, w, h, fu, fv, rand);
                             Colour sample = sampler.Sample(scene, ray, rand);
                             buf.AddSample(x, y, sample);
                         }
                     }
-                    // Adaptive Sampling
-                    if (AdaptiveSamples > 0) {
-                        double v = buf.StandardDeviation(x, y).MaxComponent();
-                        v = Util.Clamp(v / AdaptiveThreshold, 0, 1);
-                        v = Math.pow(v, AdaptiveExponent);
-                        int samples = (int) (v * AdaptiveSamples);
-                        for (int d = 0; d < samples; d++) {
+                } else {
+                    // Random subsampling
+                    for (int ii = 0; ii < spp; ii++) {
+                        fu = rand.nextDouble();
+                        fv = rand.nextDouble();
+                        Ray ray = camera.CastRay(x, y, w, h, fu, fv, rand);
+                        Colour sample = sampler.Sample(scene, ray, rand);
+                        buf.AddSample(x, y, sample);
+                    }
+                }
+                // Adaptive Sampling
+                if (AdaptiveSamples > 0) {
+                    double v = buf.StandardDeviation(x, y).MaxComponent();
+                    v = Util.Clamp(v / AdaptiveThreshold, 0, 1);
+                    v = Math.pow(v, AdaptiveExponent);
+                    int samples = (int) (v * AdaptiveSamples);
+                    for (int d = 0; d < samples; d++) {
 
+                        fu = rand.nextDouble();
+                        fv = rand.nextDouble();
+                        Ray ray = camera.CastRay(x, y, w, h, fu, fv, rand);
+                        Colour sample = sampler.Sample(scene, ray, rand);
+                        buf.AddSample(x, y, sample);
+                    }
+                }
+
+                if (FireflySamples > 0) {
+                    if (PBuffer.StandardDeviation(x, y).MaxComponent() > FireflyThreshold) {
+                        for (int e = 0; e < FireflySamples; e++) {
                             fu = rand.nextDouble();
                             fv = rand.nextDouble();
                             Ray ray = camera.CastRay(x, y, w, h, fu, fv, rand);
                             Colour sample = sampler.Sample(scene, ray, rand);
-                            buf.AddSample(x, y, sample);
-                        }
-                    }
-
-                    if (FireflySamples > 0) {
-                        if (PBuffer.StandardDeviation(x, y).MaxComponent() > FireflyThreshold) {
-                            for (int e = 0; e < FireflySamples; e++) {
-                                fu = rand.nextDouble();
-                                fv = rand.nextDouble();
-                                Ray ray = camera.CastRay(x, y, w, h, fu, fv, rand);
-                                Colour sample = sampler.Sample(scene, ray, rand);
-                                PBuffer.AddSample(x, y, sample);
-                            }
+                            PBuffer.AddSample(x, y, sample);
                         }
                     }
                 }
             }
         }
     }
-
+    
     public void IterativeRender(String pathTemplate, int iterations) throws InterruptedException, IOException {
         this.iterations = iterations;
 
         for (int iter = 1; iter < this.iterations; iter++) {
             System.out.println("[Iteration:" + iter + " of " + iterations + "]");
-            Render();
+            
+            for (int i = 0; i < this.numThreads; i++) {
+                lookupThreads[i] = new Thread(this);
+                lookupThreads[i].start();
+            }
+            
+            for (int i = 0; i < numThreads; i++) {
+                try {
+                    lookupThreads[i].join( );
+                } catch (InterruptedException iex) {}
+            }
+            
             this.pathTemplate = pathTemplate;
             File outputfile = new File(pathTemplate);
             boolean write = ImageIO.write(PBuffer.Image(PBuffer, Channel.ColorChannel), "png", outputfile);
